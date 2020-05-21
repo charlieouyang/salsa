@@ -1,0 +1,6 @@
+PGPASSWORD=salsa psql -d salsa- -h postgres -U salsa
+
+python3.6 manage.py db migrate -m "Add query_template column to keyword_class table"
+
+
+psql -h 0.0.0.0 -p 5432 -U salsa_api -W salsa

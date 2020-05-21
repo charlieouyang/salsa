@@ -1,0 +1,78 @@
+{
+  "alert_id": "ff64c20b-356d-48cb-95c1-2a7fb1a21416",
+  "fpid": "cfdcfc32-22e0-5934-b2e4-26e6ed990b66",
+  "keyword": {
+    "keyword_id": "edd1b32f-bba6-4633-be89-8d6736ae7e05",
+    "keyword_text": "iran|syria|turkey",
+    "entity_id": "ef888070-0e5e-4e83-9b74-24854912276b",
+    "entity_type": "industry",
+    "version_start_date": 1578516906.518813,
+    "keyword_name": "keywords forums only"
+  },
+  "highlights": [
+    "<x-fp-highlight>Iran</x-fp-highlight> Strikes bacK!!! #TeamTrees"
+  ],
+  "basetypes": [
+    "conversation",
+    "forum",
+    "message",
+    "post",
+    "web"
+  ],
+  "tags": {},
+  "ts": 1580192620.304714,
+  "source": {
+    "basetypes": [
+      "conversation",
+      "forum",
+      "web",
+      "message",
+      "post"
+    ],
+    "container": {
+      "basetypes": [
+        "conversation",
+        "web",
+        "forum",
+        "container",
+        "thread"
+      ],
+      "container": {
+        "title": "Not Safe For Work"
+      },
+      "fpid": "rnpuAyBfV_e_HvNNkJw8nQ",
+      "title": "[MEGA] Lauren"
+    },
+    "created_at": {
+      "date-time": "2020-01-08T10:30:00+00:00",
+      "raw": "January 08, 2020 at 10:30 AM",
+      "timestamp": 1578479400
+    },
+    "first_observed_at": {
+      "date-time": "2020-01-28T06:19:21.835273+00:00",
+      "raw": "2020-01-28 06:19:21.835273+00:00",
+      "timestamp": 1580192361
+    },
+    "fpid": "z9z8MiLgWTSy5Cbm7ZkLZg",
+    "last_observed_at": {
+      "date-time": "2020-01-28T06:19:21.835273+00:00",
+      "raw": "2020-01-28 06:19:21.835273+00:00",
+      "timestamp": 1580192361
+    },
+    "native_id": "1483646",
+    "site": {
+      "title": "Raid Forums"
+    },
+    "site_actor": {
+      "names": {
+        "handle": "TreeSloth"
+      }
+    },
+    "title": "[MEGA] Lauren"
+  },
+  "highlight_sections": {
+    "body.text/plain": [
+      "<x-fp-highlight>Iran</x-fp-highlight> Strikes bacK!!! #TeamTrees"
+    ]
+  }
+}

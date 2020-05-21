@@ -1,0 +1,567 @@
+---
+openapi: 3.0.0
+info:
+  description: Exercise betting management system.
+  title: Salsa
+  version: 0.0.1
+servers:
+  - url: /v1
+components:
+  parameters:
+    embedParam:
+      description: CSV of relations to embed in requested resource(s)
+      in: query
+      name: embed
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+        uniqueItems: true
+    pageNumberParam:
+      description: Number page of results to show
+      in: query
+      name: page_number
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    pageSizeParam:
+      description: Number results to show per page
+      in: query
+      name: page_size
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+    queryParam:
+      description: Filter by query
+      in: query
+      name: query
+      required: false
+      schema:
+        type: string
+    sortParam:
+      description: |-
+        Field to sort by; by default sorts in ascending order; add a `-`
+        prefix to sort in descending order
+      name: sort
+      in: query
+      required: false
+      schema:
+        type: string
+        default: id
+  responses:
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    NoContent:
+      description: Request successful; no content to return
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+  schemas:
+    ExclusionSet:
+      properties:
+        id:
+          format: uuid4
+          readOnly: true
+          type: string
+        name:
+          type: string
+      type: object
+
+
+
+
+
+    UserAccount:
+      properties:
+        id:
+          format: uuid4
+          readOnly: true
+          type: string
+        name:
+          type: string
+        user_name:
+          type: string
+        email:
+          type: string
+        user_role_id:
+          format: uuid4
+          type: string
+        password:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      type: object
+    PostUserAccount:
+      allOf:
+        - $ref: '#/components/schemas/UserAccount'
+        - type: object
+        - required:
+            - name
+            - email
+            - password
+            - user_name
+            - user_role_id
+    PutUserAccount:
+      allOf:
+        - $ref: '#/components/schemas/UserAccount'
+        - type: object
+        - minProperties: 1
+
+    UserRole:
+      properties:
+        id:
+          format: uuid4
+          readOnly: true
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+      type: object
+    PostUserRole:
+      allOf:
+        - $ref: '#/components/schemas/UserRole'
+        - type: object
+        - required:
+            - title
+            - description
+    PutUserRole:
+      allOf:
+        - $ref: '#/components/schemas/UserRole'
+        - type: object
+        - minProperties: 1
+
+
+
+
+
+    ProblemDetail:
+      description: 'HTTP API Problem detail as per https://tools.ietf.org/html/draft-ietf-appsawg-http-problem-00'
+      properties:
+        detail:
+          description: "human readable explanation specific to this occurrence of the\nproblem"
+          type: string
+        status:
+          description: 'HTTP response status code'
+          type: string
+        title:
+          description: "short, human-readable summary of the problem, that is the same\nacross different occurrences of the problem"
+          type: string
+      type: object
+    PaginatedList:
+      description: 'List of entities returned when pagination params specified'
+      properties:
+        count:
+          description: 'Number of pages of results for given request'
+          minimum: 1
+          type: integer
+        number:
+          description: 'Requested page'
+          minimum: 1
+          type: integer
+        size:
+          description: 'Number of results per page'
+          minimum: 0
+          type: integer
+        total:
+          description: 'Number of results matching given request across all pages'
+          minimum: 0
+          type: integer
+      type: object
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: salsa.authentication.verify_token
+paths:
+
+  /login:
+    post:
+      summary: Get a token with username and password
+      operationId: salsa.authentication.login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  description: 'Username of the user'
+                  type: string
+                password:
+                  description: 'Password of the user'
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        "200":
+          description: secret response
+          content:
+            'text/plain':
+              schema:
+                type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /user_accounts_no_auth:
+    post:
+      description: 'Create a new user account no auth required. Only can create normal users'
+      operationId: salsa.api.user_accounts.create_no_auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUserAccount'
+      responses:
+        '201':
+          description: 'Created a(n) user account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserAccount'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    parameters:
+      - $ref: "#/components/parameters/embedParam"
+
+  /user_accounts:
+    get:
+      description: Retrieve all user_accounts
+      operationId: salsa.api.user_accounts.retrieve_list
+      responses:
+        "200":
+          description: List of user accounts
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedList"
+                properties:
+                  data:
+                    items:
+                      $ref: "#/components/schemas/UserAccount"
+                    title: user_accounts
+                    type: array
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      security:
+      - jwt: ['secret']
+    post:
+      description: 'Create a new user account only called by admins'
+      operationId: salsa.api.user_accounts.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUserAccount'
+      responses:
+        '201':
+          description: 'Created a(n) user account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserAccount'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+    parameters:
+      - $ref: "#/components/parameters/embedParam"
+  '/user_accounts/{user_account_id}':
+    parameters:
+      - name: user_account_id
+        in: path
+        description: 'User Account ID'
+        required: true
+        schema:
+          format: uuid4
+          type: string
+      - $ref: '#/components/parameters/embedParam'
+    get:
+      description: 'Retrieve a user account by id'
+      operationId: salsa.api.user_accounts.retrieve
+      responses:
+        '200':
+          description: 'Retrieved user account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAccount'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - jwt: ['secret']
+    put:
+      description: 'Update a user account'
+      operationId: salsa.api.user_accounts.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutUserAccount'
+      responses:
+        '200':
+          description: 'Updated a user account'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutUserAccount'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+    delete:
+      description: 'Delete a user account'
+      operationId: salsa.api.user_accounts.delete
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - jwt: ['secret']
+
+
+
+  /user_roles:
+    get:
+      description: Retrieve all user_roles
+      operationId: salsa.api.user_roles.retrieve_list
+      responses:
+        "200":
+          description: List of user roles
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedList"
+                properties:
+                  data:
+                    items:
+                      $ref: "#/components/schemas/UserRole"
+                    title: user_roles
+                    type: array
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      security:
+      - jwt: ['secret']
+    post:
+      description: 'Create a new user role'
+      operationId: salsa.api.user_roles.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutUserRole'
+      responses:
+        '201':
+          description: 'Created a(n) user role'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserRole'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+    parameters:
+      - $ref: "#/components/parameters/embedParam"
+  '/user_roles/{user_role_id}':
+    parameters:
+      - name: user_role_id
+        in: path
+        description: 'User Role ID'
+        required: true
+        schema:
+          format: uuid4
+          type: string
+      - $ref: '#/components/parameters/embedParam'
+    get:
+      description: 'Retrieve a user role by id'
+      operationId: salsa.api.user_roles.retrieve
+      responses:
+        '200':
+          description: 'Retrieved user role'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRole'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - jwt: ['secret']
+    put:
+      description: 'Update a user role'
+      operationId: salsa.api.user_roles.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutUserRole'
+      responses:
+        '200':
+          description: 'Updated a user role'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutUserRole'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+    delete:
+      description: 'Delete a user role'
+      operationId: salsa.api.user_roles.delete
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - jwt: ['secret']
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /exclusion_sets:
+    get:
+      description: Retrieve all exclusion sets
+      operationId: salsa.api.exclusion_sets.retrieve_list
+      parameters:
+        - description: CSV of exclusion set names
+          in: query
+          name: names
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+            uniqueItems: true
+        - $ref: "#/components/parameters/embedParam"
+      responses:
+        "200":
+          description: List of exclusion sets
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedList"
+                properties:
+                  data:
+                    items:
+                      $ref: "#/components/schemas/ExclusionSet"
+                    title: exclusion_sets
+                    type: array
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      security:
+      - jwt: ['secret']
+    parameters:
+      - $ref: "#/components/parameters/embedParam"

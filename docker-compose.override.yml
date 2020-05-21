@@ -1,0 +1,21 @@
+---
+# We use the base docker-compose.yml for testing so we avoid
+# port-forwarding to avoid port collisions when same test suite
+# is being run in parallel on the git runners
+# But b/c we want port-forwarding in dev, add as override
+version: '3.2'
+services:
+  web:
+    # Don't put this in docker-compose.yml or you will encounter
+    # https://gitlab.com/gitlab-org/gitlab-runner/issues/1682
+    volumes:
+      - ".:/opt/couyang/salsa"
+  postgres:
+    # Make postgres log to a file
+    command: "postgres -c logging_collector=on -c log_destination=stderr,csvlog -c log_filename=postgresql.log -c log_min_duration_statement=0 -c log_checkpoints=on -c log_connections=on -c log_disconnections=on -c log_lock_waits=on -c log_temp_files=0 -c log_autovacuum_min_duration=0 -c log_error_verbosity=default -c lc_messages='C' -c log_line_prefix='%t [%p]: [%l-1] '"
+    ports:
+      - "5432:5432"
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+volumes:
+  pgdata:

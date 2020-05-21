@@ -1,0 +1,43 @@
+{
+  "alert_id": "f7f02842-db1e-4301-91f7-a6e213b56716",
+  "fpid": "59aff260-f5dc-57da-a71c-95f7975e59b1",
+  "keyword": {
+    "keyword_id": "edd1b32f-bba6-4633-be89-8d6736ae7e05",
+    "keyword_text": "iran|syria|turkey",
+    "entity_id": "ef888070-0e5e-4e83-9b74-24854912276b",
+    "entity_type": "organization",
+    "version_start_date": 1578516906.518813,
+    "keyword_name": "keywords forums only"
+  },
+  "highlights": [
+    "Chive <x-fp-highlight>Turkey</x-fp-highlight>"
+  ],
+  "basetypes": [
+    "conversation",
+    "forum",
+    "message",
+    "post",
+    "web"
+  ],
+  "tags": {},
+  "ts": 1579201432.559828,
+  "metadata": {
+    "client_id": "someclient",
+    "keyword_id": "credentials",
+    "github_url": "https://github.com/edx/credentials",
+    "snippet": "Service hosting course and program certificates",
+    "github_contributor": "edx",
+    "github_repo": "credentials",
+    "github_gist_id": null,
+    "github_repo_issue_id": null,
+    "github_file": null
+  },
+  "source": {
+    "fpid": "Wa_yYPXcV9qnHJX3l15ZsQ"
+  },
+  "highlight_sections": {
+    "site_actor.names.handle": [
+      "Chive <x-fp-highlight>Turkey</x-fp-highlight>"
+    ]
+  }
+}

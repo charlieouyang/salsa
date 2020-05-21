@@ -1,0 +1,83 @@
+import os
+
+from .config import read_key
+from .defaults import Config
+
+TEST_JWT_PUBLIC_KEY = """ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDbquN1InAYE5GqGtjYycPWR6fJi8cg8ahUgx7ZdU7Trgb/CKNJ7W4kNFkabzkKgMwAY0pgfaYWCYzfTErmzACOS75TTyNVtlultRdtsTHU3iygDQwN2T9ebAR1HU/VE2pIxV4U7DPJhUwLIXVG6fwI+fAjfNuaVaSMKOcJkayvkzXVPWdyXFoa+6pW1bGPatYYlRgGOqgVLTO7hWzT6UqY7TbkrsZjxt9dA/VTZUmhXJDlNZ7Hrh/nxeVgDM32IZ0aQ1k/lnMxyB2T1R5ES+WhRnROn3MFA3mfBBE18uB8CoyZnnWwY4LRB+M8pCqp1AU8AG0mdpSnhF481ewzX9cWat6Gm2nQEi6BMo8yBj+8wmcUcObKcRmqaAFnHXpnFqQRVz8axoV0Nm06MluYXlp6tWYRACMHgdZQpBW3m7Yx61Ep9Bbiw3h1K5P9xkzFPalq3BpzaHeHiJHZt86cDbQDDFl1UdUKUE9o7RjwJuKXo8KKKhQuW5gVGhraHb828toc9wVvEFldth/M2voy0ToVY7C6WBGu4nm6afVKeX27VfhGOrXdnB5CXASHgN6dOvUPnwoCHMtn7WCFvn9cgva/IQHHTB/Vx029wgUoiChBfZkU7fLwatTEhJvNnr7m0PBN+DblVIDkt/IiyO51pwp+bnMjYOK8qFxmr1RRPX+Arw== user27995691@User27995691s-MacBook-Pro.local
+"""
+
+TEST_JWT_PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
+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
+-----END RSA PRIVATE KEY-----
+"""
+
+key_dir = os.path.join(
+    os.path.dirname(__file__), os.pardir, os.pardir, 'tests', 'fixtures')
+
+TEST_JWT_PUBLIC_KEY_PATH = os.path.abspath(
+    os.path.join(key_dir, 'secp256k1-pub.pem'))
+TEST_JWT_PRIVATE_KEY_PATH = os.path.abspath(
+    os.path.join(key_dir, 'secp256k1-priv.pem'))
+
+
+class TestingConfig(Config):
+    """
+    TestingConfig stores the testing environment specific config params.
+    """
+    # disable verbose logging during testing
+    LOG_LEVEL = 'ERROR'
+
+    # map JWT issuer to their public key
+    JWT_PUBLIC_KEYS = {
+        'salsa': read_key(TEST_JWT_PUBLIC_KEY_PATH),
+    }
+
+    JWT_PRIVATE_KEY = read_key(TEST_JWT_PRIVATE_KEY_PATH)

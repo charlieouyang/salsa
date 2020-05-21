@@ -1,0 +1,48 @@
+sudo: required
+services:
+  - docker
+
+env:
+  global:
+    # Getting latest git commit hash used for tagging docker images
+    - SHA=$(git rev-parse HEAD)
+    # the export is to disable prompt so we can proceed with installation
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+    - ENVIRONMENT=testing
+
+before_install:
+  # Use encrypted google cloud service-account.json.enc file to login
+  # File was generated
+  #   -> Created IAM account on gcloud and downloaded service-account.json
+  #   -> Open travis CLI in a ruby:2.4 docker image
+  #   -> Log into travis and encrypt service-account.json and get service-account.json.enc
+  #   -> Resulting command is from the output of the encryption
+  - openssl aes-256-cbc -K $encrypted_a64bd53f0cbd_key -iv $encrypted_a64bd53f0cbd_iv -in travis-ci-deployer-service-account.json.enc -out travis-ci-deployer-service-account.json -d
+  # Setup GCLoud CLI on travis
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  - source /home/travis/google-cloud-sdk/path.bash.inc
+  - gcloud version
+  - gcloud components update kubectl
+  # Log into gcloud with gcloud IAM account
+  - gcloud auth activate-service-account --key-file travis-ci-deployer-service-account.json
+  # Select project ID (beside project name)
+  - gcloud config set project chinese-goods-277420
+  # Set zone
+  - gcloud config set compute/zone us-central1-c
+  # Use charlie-cluster
+  - gcloud container clusters get-credentials charlie-cluster
+  # Log into docker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  # Build the tests and tag it
+  - docker build -t charlieouyang/salsa .
+
+# All the commands that need to be ran in order for our test suite to run
+script:
+  - docker-compose run -e ENVIRONMENT=testing web make test
+
+# Run our deploy script
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
