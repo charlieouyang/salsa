@@ -1,23 +1,19 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import OtherPage from './OtherPage';
+import './resources/styles.css';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+import Header from './components/header_footer/Header';
+import Featured from './components/featured';
 
 class App extends Component {
   render() {
     return (
       <Router>
-        <div className="App">
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <h1 className="App-title">合力</h1>
-            <Link to="/">Home</Link>
-            <Link to="/otherpage">Other Page</Link>
-          </header>
-          <div>
-            <Route path="/otherpage" component={OtherPage} />
-          </div>
+        <div className="App" style={{ height: "1500px", background: "cornflowerblue" }}>
+          <Header />
+          <Featured />
         </div>
       </Router>
     );
