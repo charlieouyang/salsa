@@ -8,7 +8,7 @@ const Featured = () => {
 
             <div className="artist_name">
                 <div className="wrapper">
-                    合力 HELISTRONG
+                    HELISTRONG
                 </div>
             </div>
         </div>

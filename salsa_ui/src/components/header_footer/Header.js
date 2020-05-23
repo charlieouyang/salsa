@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -47,8 +48,7 @@ class Header extends Component {
             >
                 <Toolbar>
                     <div className="header_logo">
-                        <div className="font_righteous header_logo_venue">OU YANG</div>
-                        <div className="header_logo_title">Squad</div>
+                        <div className="font_righteous header_logo_venue">合力</div>
                     </div>
 
                     <IconButton
