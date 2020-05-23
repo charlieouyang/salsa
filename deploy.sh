@@ -1,5 +1,5 @@
 docker build -t charlieouyang/salsa:latest -t charlieouyang/salsa:$SHA .
-docker build -t charlieouyang/salsa_ui:latest -t charlieouyang/salsa_ui:$SHA -f ./salsa_ui/Dockerfile ./salsa_ui
+docker build -t charlieouyang/salsa_ui:latest -t charlieouyang/salsa_ui:$SHA ./salsa_ui
 
 docker push charlieouyang/salsa:latest
 docker push charlieouyang/salsa:$SHA
