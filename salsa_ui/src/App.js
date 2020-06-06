@@ -9,6 +9,7 @@ import Header from './components/header_footer/Header';
 import Featured from './components/featured';
 import ProductInfo from './components/product_info';
 import Highlight from './components/highlights';
+import Download from './components/download';
 import Footer from './components/header_footer/Footer'
 
 class App extends Component {
@@ -20,11 +21,14 @@ class App extends Component {
           <Element name="featured">
             <Featured />
           </Element>
-          <Element name="product_info">
+          <Element name="description">
             <ProductInfo />
           </Element>
           <Element name="highlights">
             <Highlight />
+          </Element>
+          <Element name="download">
+            <Download />
           </Element>
           <Footer />
         </div>
