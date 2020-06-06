@@ -37,7 +37,7 @@ class Discount extends Component {
                         </div>
                     </Fade>
 
-                    <Slide right>
+                    <Fade>
                         <div className="discount_description">
                             <h3>Purchase ticket before JUNE 20th</h3>
                             <p>Donec molestie quam ut ipsum tincidunt mattis. Suspendisse in tempus neque, vel pulvinar odio. Nunc nulla dolor, tristique sed metus gravida, dictum porttitor lectus. Donec non semper ante, vel condimentum arcu. Aliquam erat volutpat. Sed id augue convallis, aliquam orci nec, mattis lacus. Donec suscipit enim ullamcorper elit faucibus hendrerit. Nulla facilisi.</p>
@@ -49,7 +49,7 @@ class Discount extends Component {
                                 href="http://google.com"
                             />
                         </div>
-                    </Slide>
+                    </Fade>
                 </div>
             </div>
         );

@@ -22,13 +22,17 @@ body {
     background: #ffa800;
 }
 
+.bck_offwhite {
+    background: floralwhite;
+}
+
 .iconImage {
     width: 20px;
     margin-right: 10px;
 }
 
 .center_wrapper {
-    width: 900px;
+    width: 80%;
     margin:0 auto;
 }
 
@@ -170,6 +174,7 @@ footer .footer_copyright {
     width:50%;
     color:#ffffff;
     text-align: center;
+    padding: 20px;
 }
                       
 .vn_item .vn_outer {
@@ -216,6 +221,7 @@ footer .footer_copyright {
     margin: 90px 0px 20px 0px;
     border-bottom: 1px solid #5d5d5d;
     padding-bottom: 10px;
+    text-transform: uppercase;
 }
 
 .vn_item .vn_desc {
@@ -242,7 +248,14 @@ footer .footer_copyright {
     font-weight: 300;
     border-top: 1px solid #dddddd;
     border-bottom: 1px solid #dddddd;
-    padding: 30px 0px;
+}
+
+.highlight_wrapper .download_app_description {
+    line-height: 30px;
+    font-size: 18px;
+    font-weight: 300;
+    border-top: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
 }
 
 .discount_wrapper {
