@@ -29,7 +29,7 @@ const ProductInfo = () => {
                                         Best Quality
                                     </div>
                                     <div className="vn_desc">
-                                        Freshest and the best foods
+                                        Direct from the source
                                     </div>
                                 </div>
                             </div>
@@ -48,10 +48,10 @@ const ProductInfo = () => {
                                         }}>
                                     </div>
                                     <div className="vn_title">
-                                        Cheapest Price
+                                        Lowest Prices
                                     </div>
                                     <div className="vn_desc">
-                                        Direct from the source
+                                        Skip the grocery store
                                     </div>
                                 </div>
                             </div>
@@ -70,7 +70,7 @@ const ProductInfo = () => {
                                         }}>
                                     </div>
                                     <div className="vn_title">
-                                        Trusted Partner
+                                        Trusted Partners
                                     </div>
                                     <div className="vn_desc">
                                         We are your neighbors
