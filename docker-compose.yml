@@ -31,7 +31,7 @@ services:
     links:
       - postgres
   postgres:
-    image: postgres:9.4
+    image: postgres:9.6
     environment:
       POSTGRES_USER: salsa
       POSTGRES_PASSWORD: salsa

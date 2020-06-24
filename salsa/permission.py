@@ -8,6 +8,9 @@ USER_PERM_TITLE = 'User'
 def get_user(kwargs):
     return kwargs.get('token_info')
 
+def get_user_id_from_user(user_obj):
+    return T.get_in(['usr', 'id'], user_obj)
+
 
 def is_user_admin(user):
     permission_title = T.get_in(['prm', 'title'], user)

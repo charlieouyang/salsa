@@ -1,6 +1,14 @@
 PGPASSWORD=salsa psql -d salsa- -h postgres -U salsa
 
-python3.6 manage.py db migrate -m "Add query_template column to keyword_class table"
+python3 manage.py db migrate -m "Add product table"
 
 
 psql -h 0.0.0.0 -p 5432 -U salsa_api -W salsa
+
+
+User27995691s-MacBook-Pro:salsa user27995691$ docker-compose run --rm -p 5001:5000 web bash
+
+[root@salsa salsa]# export ENVIRONMENT=testing
+[root@salsa salsa]# make db-reset
+[root@salsa salsa]# python3 -m unittest -v tests.unit.api.test_listing.TestListingsController.test_list_with_name
+[root@salsa salsa]# python3 -m unittest discover -s ./tests/unit/ -v

@@ -86,20 +86,6 @@ components:
           schema:
             $ref: "#/components/schemas/ProblemDetail"
   schemas:
-    ExclusionSet:
-      properties:
-        id:
-          format: uuid4
-          readOnly: true
-          type: string
-        name:
-          type: string
-      type: object
-
-
-
-
-
     UserAccount:
       properties:
         id:
@@ -111,6 +97,8 @@ components:
         user_name:
           type: string
         email:
+          type: string
+        extradata:
           type: string
         user_role_id:
           format: uuid4
@@ -131,12 +119,233 @@ components:
         - required:
             - name
             - email
+            - extradata
             - password
             - user_name
             - user_role_id
     PutUserAccount:
       allOf:
         - $ref: '#/components/schemas/UserAccount'
+        - type: object
+        - minProperties: 1
+
+    Product:
+      properties:
+        id:
+          format: uuid4
+          readOnly: true
+          type: string
+        active:
+          type: boolean
+        name:
+          type: string
+        description:
+          type: string
+        image_urls:
+          type: array
+          items:
+            type: string
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_id:
+          format: uuid4
+          type: string
+      type: object
+    PostProduct:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+        - required:
+            - active
+            - name
+            - description
+            - image_urls
+    PutProduct:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+        - minProperties: 1
+
+    Category:
+      properties:
+        id:
+          format: uuid4
+          readOnly: true
+          type: string
+        name:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      type: object
+    PostCategory:
+      allOf:
+        - $ref: '#/components/schemas/Category'
+        - type: object
+        - required:
+            - name
+    PutCategory:
+      allOf:
+        - $ref: '#/components/schemas/Category'
+        - type: object
+        - minProperties: 1
+
+    ProductCategory:
+      properties:
+        product_id:
+          format: uuid4
+          type: string
+        category_ids:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: uuid4
+      type: object
+    PostProductCategory:
+      allOf:
+        - $ref: '#/components/schemas/ProductCategory'
+        - type: object
+        - required:
+            - product_id
+            - category_ids
+
+    Listing:
+      properties:
+        id:
+          format: uuid4
+          readOnly: true
+          type: string
+        active:
+          type: boolean
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          minimum: 0
+          maximum: 99999999
+        amount_available:
+          type: number
+          minimum: 0
+          maximum: 99999999
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_id:
+          format: uuid4
+          type: string
+        product_id:
+          format: uuid4
+          type: string
+      type: object
+    PostListing:
+      allOf:
+        - $ref: '#/components/schemas/Listing'
+        - type: object
+        - required:
+            - active
+            - name
+            - description
+            - price
+            - amount_available
+            - product_id
+    PutListing:
+      allOf:
+        - $ref: '#/components/schemas/Listing'
+        - type: object
+        - minProperties: 1
+
+    Purchase:
+      properties:
+        id:
+          format: uuid4
+          readOnly: true
+          type: string
+        amount:
+          type: number
+          minimum: 0
+          maximum: 99999999
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_id:
+          format: uuid4
+          type: string
+        listing_id:
+          format: uuid4
+          type: string
+      type: object
+    PostPurchase:
+      allOf:
+        - $ref: '#/components/schemas/Purchase'
+        - type: object
+        - required:
+            - amount
+            - listing_id
+    PutPurchase:
+      allOf:
+        - $ref: '#/components/schemas/Purchase'
+        - type: object
+        - minProperties: 1
+
+    Review:
+      properties:
+        id:
+          format: uuid4
+          readOnly: true
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        numstars:
+          type: number
+          minimum: 1
+          maximum: 5
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_id:
+          format: uuid4
+          type: string
+        product_id:
+          format: uuid4
+          type: string
+        purchase_id:
+          format: uuid4
+          type: string
+      type: object
+    PostReview:
+      allOf:
+        - $ref: '#/components/schemas/Review'
+        - type: object
+        - required:
+            - name
+            - description
+            - numstars
+            - product_id
+            - purchase_id
+    PutReview:
+      allOf:
+        - $ref: '#/components/schemas/Review'
         - type: object
         - minProperties: 1
 
@@ -373,25 +582,15 @@ paths:
           $ref: '#/components/responses/Forbidden'
       security:
       - jwt: ['secret']
-    delete:
-      description: 'Delete a user account'
-      operationId: salsa.api.user_accounts.delete
-      responses:
-        '204':
-          $ref: '#/components/responses/NoContent'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-      security:
-      - jwt: ['secret']
-
-
 
   /user_roles:
     get:
+      parameters:
+        - name: title
+          in: query
+          description: 'Query by title name'
+          schema:
+            type: string
       description: Retrieve all user_roles
       operationId: salsa.api.user_roles.retrieve_list
       responses:
@@ -416,8 +615,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-      security:
-      - jwt: ['secret']
     post:
       description: 'Create a new user role'
       operationId: salsa.api.user_roles.create
@@ -496,52 +693,31 @@ paths:
           $ref: '#/components/responses/Forbidden'
       security:
       - jwt: ['secret']
-    delete:
-      description: 'Delete a user role'
-      operationId: salsa.api.user_roles.delete
-      responses:
-        '204':
-          $ref: '#/components/responses/NoContent'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-      security:
-      - jwt: ['secret']
 
-
-
-
-
-
-
-
-
-
-
-
-
-  /exclusion_sets:
+  /products:
     get:
-      description: Retrieve all exclusion sets
-      operationId: salsa.api.exclusion_sets.retrieve_list
       parameters:
-        - description: CSV of exclusion set names
+        - name: name
           in: query
-          name: names
-          style: form
-          explode: false
+          description: 'Query by product name'
           schema:
-            type: array
-            items:
-              type: string
-            uniqueItems: true
-        - $ref: "#/components/parameters/embedParam"
+            type: string
+        - name: user_id
+          in: query
+          description: 'Query by user account id'
+          schema:
+            format: uuid4
+            type: string
+        - name: active
+          in: query
+          description: 'Query by product active flag'
+          schema:
+            type: boolean
+      description: Retrieve all products
+      operationId: salsa.api.products.retrieve_list
       responses:
         "200":
-          description: List of exclusion sets
+          description: List of products
           content:
             application/json:
               schema:
@@ -550,8 +726,8 @@ paths:
                 properties:
                   data:
                     items:
-                      $ref: "#/components/schemas/ExclusionSet"
-                    title: exclusion_sets
+                      $ref: "#/components/schemas/Product"
+                    title: products
                     type: array
         "400":
           $ref: "#/components/responses/BadRequest"
@@ -563,5 +739,609 @@ paths:
           $ref: "#/components/responses/NotFound"
       security:
       - jwt: ['secret']
+    post:
+      description: 'Create a new product'
+      operationId: salsa.api.products.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostProduct'
+      responses:
+        '201':
+          description: 'Created a product'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostProduct'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
     parameters:
       - $ref: "#/components/parameters/embedParam"
+  '/products/{product_id}':
+    parameters:
+      - name: product_id
+        in: path
+        description: 'Product ID'
+        required: true
+        schema:
+          format: uuid4
+          type: string
+      - $ref: '#/components/parameters/embedParam'
+    get:
+      description: 'Retrieve a product by id'
+      operationId: salsa.api.products.retrieve
+      responses:
+        '200':
+          description: 'Retrieved a product'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - jwt: ['secret']
+    put:
+      description: 'Update a product'
+      operationId: salsa.api.products.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutProduct'
+      responses:
+        '200':
+          description: 'Updated a product'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutProduct'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+
+  /categories:
+    get:
+      parameters:
+        - name: name
+          in: query
+          description: 'Query by category name'
+          schema:
+            type: string
+      description: Retrieve all categories
+      operationId: salsa.api.categories.retrieve_list
+      responses:
+        "200":
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedList"
+                properties:
+                  data:
+                    items:
+                      $ref: "#/components/schemas/Category"
+                    title: categories
+                    type: array
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      security:
+      - jwt: ['secret']
+    post:
+      description: 'Create a new category'
+      operationId: salsa.api.categories.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCategory'
+      responses:
+        '201':
+          description: 'Created a category'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+    parameters:
+      - $ref: "#/components/parameters/embedParam"
+  '/categories/{category_id}':
+    parameters:
+      - name: category_id
+        in: path
+        description: 'Category ID'
+        required: true
+        schema:
+          format: uuid4
+          type: string
+      - $ref: '#/components/parameters/embedParam'
+    get:
+      description: 'Retrieve a category by id'
+      operationId: salsa.api.categories.retrieve
+      responses:
+        '200':
+          description: 'Retrieved a category'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - jwt: ['secret']
+    put:
+      description: 'Update a category'
+      operationId: salsa.api.categories.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutCategory'
+      responses:
+        '200':
+          description: 'Updated a category'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+
+  /product_categories:
+    post:
+      description: 'Assign categories to a product'
+      operationId: salsa.api.product_categories.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostProductCategory'
+      responses:
+        '201':
+          description: 'Assigned categories to product'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostProductCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+    parameters:
+      - $ref: "#/components/parameters/embedParam"
+  '/product_categories/{product_id}':
+    parameters:
+      - name: product_id
+        in: path
+        description: 'Product ID'
+        required: true
+        schema:
+          format: uuid4
+          type: string
+      - $ref: '#/components/parameters/embedParam'
+    get:
+      description: 'Retrieve categories assigned to product'
+      operationId: salsa.api.product_categories.retrieve
+      responses:
+        '200':
+          description: 'Retrieved categories assigned to product'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductCategory'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - jwt: ['secret']
+
+  /listings:
+    get:
+      parameters:
+        - name: name
+          in: query
+          description: 'Query by listing name'
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          description: 'Query by user account id'
+          schema:
+            format: uuid4
+            type: string
+        - name: product_id
+          in: query
+          description: 'Query by product id'
+          schema:
+            format: uuid4
+            type: string
+        - name: category_ids
+          in: query
+          description: 'Query by category ids'
+          schema:
+            type: array
+            items:
+              format: uuid4
+              type: string
+        - name: active
+          in: query
+          description: 'Query by listing active flag'
+          schema:
+            type: boolean
+      description: Retrieve all listings
+      operationId: salsa.api.listings.retrieve_list
+      responses:
+        "200":
+          description: List of listings
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedList"
+                properties:
+                  data:
+                    items:
+                      $ref: "#/components/schemas/Listing"
+                    title: listings
+                    type: array
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      security:
+      - jwt: ['secret']
+    post:
+      description: 'Create a new listing'
+      operationId: salsa.api.listings.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostListing'
+      responses:
+        '201':
+          description: 'Created a listing'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostListing'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+    parameters:
+      - $ref: "#/components/parameters/embedParam"
+  '/listings/{listing_id}':
+    parameters:
+      - name: listing_id
+        in: path
+        description: 'Listing ID'
+        required: true
+        schema:
+          format: uuid4
+          type: string
+      - $ref: '#/components/parameters/embedParam'
+    get:
+      description: 'Retrieve a listing by id'
+      operationId: salsa.api.listings.retrieve
+      responses:
+        '200':
+          description: 'Retrieved a listing'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - jwt: ['secret']
+    put:
+      description: 'Update a listing'
+      operationId: salsa.api.listings.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutListing'
+      responses:
+        '200':
+          description: 'Updated a listing'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutListing'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+
+  /purchases:
+    get:
+      parameters:
+        - name: listing_id
+          in: query
+          description: 'Query by listing id'
+          schema:
+            format: uuid4
+            type: string
+      description: Retrieve all purchases
+      operationId: salsa.api.purchases.retrieve_list
+      responses:
+        "200":
+          description: List of purchases
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedList"
+                properties:
+                  data:
+                    items:
+                      $ref: "#/components/schemas/Purchase"
+                    title: listings
+                    type: array
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      security:
+      - jwt: ['secret']
+    post:
+      description: 'Create a new purchase'
+      operationId: salsa.api.purchases.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostPurchase'
+      responses:
+        '201':
+          description: 'Created a purchase'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostPurchase'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+    parameters:
+      - $ref: "#/components/parameters/embedParam"
+  '/purchases/{purchase_id}':
+    parameters:
+      - name: purchase_id
+        in: path
+        description: 'Purchase ID'
+        required: true
+        schema:
+          format: uuid4
+          type: string
+      - $ref: '#/components/parameters/embedParam'
+    get:
+      description: 'Retrieve a purchase by id'
+      operationId: salsa.api.purchases.retrieve
+      responses:
+        '200':
+          description: 'Retrieved a purchase'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Purchase'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - jwt: ['secret']
+    put:
+      description: 'Update a purchase'
+      operationId: salsa.api.purchases.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutPurchase'
+      responses:
+        '200':
+          description: 'Updated a purchase'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutPurchase'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+
+  /reviews:
+    get:
+      description: Retrieve all reviews
+      operationId: salsa.api.reviews.retrieve_list
+      responses:
+        "200":
+          description: List of reviews
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedList"
+                properties:
+                  data:
+                    items:
+                      $ref: "#/components/schemas/Review"
+                    title: listings
+                    type: array
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      security:
+      - jwt: ['secret']
+    post:
+      description: 'Create a new review'
+      operationId: salsa.api.reviews.create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostReview'
+      responses:
+        '201':
+          description: 'Created a review'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostReview'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']
+    parameters:
+      - $ref: "#/components/parameters/embedParam"
+  '/reviews/{review_id}':
+    parameters:
+      - name: review_id
+        in: path
+        description: 'Review ID'
+        required: true
+        schema:
+          format: uuid4
+          type: string
+      - $ref: '#/components/parameters/embedParam'
+    get:
+      description: 'Retrieve a review by id'
+      operationId: salsa.api.reviews.retrieve
+      responses:
+        '200':
+          description: 'Retrieved a review'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+      - jwt: ['secret']
+    put:
+      description: 'Update a review'
+      operationId: salsa.api.reviews.update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutReview'
+      responses:
+        '200':
+          description: 'Updated a review'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutReview'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+      - jwt: ['secret']

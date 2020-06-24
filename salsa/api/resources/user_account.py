@@ -6,12 +6,14 @@ from .base import BaseResource
 from salsa.models import UserAccount, UserRole
 from salsa.api.resources.helpers import (serialize_return,
                                          get_hashed_password,
-                                         sqlalchemy_exception_handler)
+                                         sqlalchemy_exception_handler,
+                                         is_valid_json)
 from salsa.permission import only_admin, get_user
 from salsa.utils.decorators import decorate_all_methods
 
 
 INVALID_PASSWORD_MSG = 'Invalid password'
+INVALID_EXTRADATA_MSG = 'Invalid extradata. Extradata must be a json string'
 
 
 @decorate_all_methods(sqlalchemy_exception_handler)
@@ -67,6 +69,10 @@ class UserAccountResource(BaseResource):
         password_hashed = get_hashed_password(password)
         user_account['password_hashed'] = password_hashed
 
+        extradata = user_account.get("extradata")
+        if extradata:
+            self._check_extradata(extradata)
+
         return user_account
 
     @serialize_return(status=200)
@@ -82,13 +88,18 @@ class UserAccountResource(BaseResource):
             else:
                 raise BadRequest(description='Can\'t set an empty password')
 
+        extradata = user_account.get("extradata")
+        if extradata:
+            self._check_extradata(extradata)
+
         self.model.find_by_ids_for_user([user_account_id], get_user(kwargs))
         return super().update(user_account_id, user_account)
 
-    @only_admin
-    @serialize_return(status=204)
-    def delete(self, user_account_id, **kwargs):
-        return super().delete(user_account_id)
+    def _check_extradata(self, extradata):
+        try:
+            is_valid_json(extradata)
+        except ValueError as exc:
+            raise BadRequest(description=INVALID_EXTRADATA_MSG)
 
 
 user_accounts = UserAccountResource()

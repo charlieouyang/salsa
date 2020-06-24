@@ -1,3 +1,5 @@
+import copy
+
 from collections import Iterable
 from functools import wraps
 from uuid import uuid4
@@ -91,22 +93,6 @@ class ApiUnitTestCase:
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json, [])
 
-    @skip_if_not_defined('delete')
-    def test_delete(self, id_=None):
-        # Delete all instances of this model first...
-        db.session.query(self.api.model).delete()
-
-        if id_ is None:
-            instance = self.factory()
-            id_ = instance.id
-
-        res = self.api.delete(id_, token_info=self.user)
-
-        self.assertIsNotNone(res.data)
-        self.assertEqual(res.status_code, 204)
-
-        self.assertEqual([], db.session.query(self.api.model).all())
-
     def _list_with_embed(self, make_instance, embed, **kwargs):
         for _ in range(5):
             instance = make_instance()
@@ -177,9 +163,17 @@ class ApiUnitTestCase:
                     is_there,
                     (str(instance.id) in [o['id'] for o in res.json]))
 
-    def _post_valid(self, body, expected=None, use_expected_for_body=False):
+    def _post_valid(self, body, expected=None,
+                                use_expected_for_body=False,
+                                user_id_in_body=None):
 
-        res = self.api.create(body=body, token_info=self.user)
+        if user_id_in_body:
+            user = copy.deepcopy(self.user)
+            user['usr'] = {'id': user_id_in_body}
+        else:
+            user = self.user
+
+        res = self.api.create(body=body, token_info=user)
 
         # if expected is not given, expected should be body
         if expected is None:
@@ -205,9 +199,16 @@ class ApiUnitTestCase:
     def _post_invalid(self, body,
                       err='{} validation error',
                       detail=None,
-                      error_code=400):
+                      error_code=400,
+                      user_id_in_body=None):
 
-        res = self.api.create(body=body, token_info=self.user)
+        if user_id_in_body:
+            user = copy.deepcopy(self.user)
+            user['usr'] = {'id': user_id_in_body}
+        else:
+            user = self.user
+
+        res = self.api.create(body=body, token_info=user)
 
         self.assertIsNotNone(res.data)
         self.assertEqual(res.status_code, error_code)
@@ -279,21 +280,6 @@ class ApiUnitTestCase:
         else:
             self.assertEqual(res.json['detail'], err_msg)
 
-    def _delete_invalid(self,
-                       err='{} validation error',
-                       id_=None,
-                       error_code=400):
-        if id_ is None:
-            instance = self.factory()
-            id_ = instance.id
-
-        res = self.api.delete(id_, token_info=self.user)
-
-        self.assertIsNotNone(res.data)
-        self.assertEqual(res.status_code, error_code)
-        self.assertEqual(res.json['detail'], err
-                         .format(self.api.model.__name__))
-
 
 class PermissionsTestCase(ApiUnitTestCase):
     def setUp(self):
@@ -304,7 +290,3 @@ class PermissionsTestCase(ApiUnitTestCase):
                 'title': permission.USER_PERM_TITLE
             }
         }
-
-
-    def test_delete(self):
-        pass

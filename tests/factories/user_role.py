@@ -12,7 +12,6 @@ def get_role():
                           permission.USER_PERM_TITLE])
 
 class UserRoleFactory(ModelFactory):
-    # title = get_role()
     title = factory.Faker('text')
     description = factory.Faker('text')
 

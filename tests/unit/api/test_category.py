@@ -1,25 +1,25 @@
 import unittest
 from unittest import mock
 
-from salsa.api import user_roles as user_roles_api
+from salsa.api import categories as categories_api
 
 from tests.unit.api import ApiUnitTestCase, PermissionsTestCase
 from tests import SalsaTestCase
-from tests.factories import UserRoleFactory
+from tests.factories import CategoryFactory
 
 
-class TestUserRolesController(ApiUnitTestCase, SalsaTestCase):
+class TestCategoriesController(ApiUnitTestCase, SalsaTestCase):
     def setUp(self):
-        super(TestUserRolesController, self).setUp()
-        self.api = user_roles_api
-        self.factory = UserRoleFactory
+        super(TestCategoriesController, self).setUp()
+        self.api = categories_api
+        self.factory = CategoryFactory
 
     def test_list_with_name(self):
         for _ in range(3):
-            UserRoleFactory()
+            CategoryFactory()
 
-        matched = UserRoleFactory(title='test_title')
-        res = self.api.retrieve_list(title=matched.title)
+        matched = CategoryFactory(name='test_name')
+        res = self.api.retrieve_list(name=matched.name)
 
         self.assertIsNotNone(res.data)
         self.assertEqual(res.status_code, 200)
@@ -27,59 +27,56 @@ class TestUserRolesController(ApiUnitTestCase, SalsaTestCase):
         self.assertEqual(res.json[0]['id'], str(matched.id))
 
     def test_list_with_filter(self):
-        self._list_with_filter(title='test_title_1')
+        self._list_with_filter(name='test_name_1')
 
     def test_post(self):
-        user_role = UserRoleFactory()
         body = {
-            'title': 'test_title',
-            'description': 'test_description',
+            'name': 'test_name',
         }
 
         self._post_valid(body)
 
     def test_post_invalid(self):
-        user_role = UserRoleFactory()
+        category = CategoryFactory()
 
         body = {
-            'title': user_role.title,
-            'description': 'test_description',
+            'name': category.name
         }
         self._post_invalid(body, err='{} already exists')
 
     def test_put(self):
-        user_role = UserRoleFactory()
+        category = CategoryFactory()
         body = {
-            'description': 'test_description'
+            'name': 'test_name'
         }
         self._put_valid(body)
 
     def test_put_invalid(self):
-        user_role = UserRoleFactory()
+        category = CategoryFactory()
         body = {
-            'title': user_role.title
+            'name': category.name
         }
         self._put_invalid(body, err='{} already exists')
 
     def test_put_not_found(self):
-        self._put_not_found({'title': 'test_title'})
+        self._put_not_found({'name': 'test_name'})
 
 
-class TestUserRolesPermissions(PermissionsTestCase, SalsaTestCase):
+class TestCategoriesPermissions(PermissionsTestCase, SalsaTestCase):
     def setUp(self):
-        super(TestUserRolesPermissions, self).setUp()
-        self.api = user_roles_api
-        self.factory = UserRoleFactory
+        super(TestCategoriesPermissions, self).setUp()
+        self.api = categories_api
+        self.factory = CategoryFactory
 
     def tearDown(self):
-        super(TestUserRolesPermissions, self).tearDown()
+        super(TestCategoriesPermissions, self).tearDown()
 
     def test_list_with_name(self):
         for _ in range(3):
-            UserRoleFactory()
+            CategoryFactory()
 
-        matched = UserRoleFactory(title='test_title')
-        res = self.api.retrieve_list(title=matched.title)
+        matched = CategoryFactory(name='test_title')
+        res = self.api.retrieve_list(name=matched.name)
 
         self.assertIsNotNone(res.data)
         self.assertEqual(res.status_code, 200)
@@ -88,19 +85,16 @@ class TestUserRolesPermissions(PermissionsTestCase, SalsaTestCase):
 
     # Basic user should not be able to create a user_role
     def test_post_invalid(self):
-        user_role = UserRoleFactory()
         body = {
-            'title': 'test_title',
-            'description': 'test_description',
+            'name': 'test_name',
         }
 
         self._post_invalid(body, err='Insufficient permissions', error_code=403)
 
     # Basic user should not be able to update a user_role
     def test_put_invalid(self):
-        user_role = UserRoleFactory()
         body = {
-            'title': user_role.title
+            'name': 'test_name',
         }
         self._put_invalid(body, err='Insufficient permissions', error_code=403)
 

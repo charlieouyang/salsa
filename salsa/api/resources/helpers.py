@@ -1,14 +1,15 @@
 from collections import Iterable
 from functools import wraps
-from uuid import uuid4
+from uuid import UUID, uuid4
 import bcrypt
+import json
 
 import flask
 from flask import current_app as app
 import sqlalchemy as sa
 from marshmallow import fields
 import toolz as T
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, BadRequest
 
 import salsa.serializers
 from salsa.utils.responses import error, no_content, not_found, reply
@@ -208,4 +209,13 @@ def check_password(plain_text_password, hashed_password):
     if not bcrypt.checkpw(plain_text_password.encode('utf8'), hashed_password.encode('utf8')):
         raise ValueError('Password do not match')
 
+def is_valid_json(string_payload):
+    json.loads(string_payload)
 
+def is_valid_uuid4(uuid_string):
+    try:
+        UUID(uuid_string, version=4)
+    except ValueError:
+        return False
+
+    return True

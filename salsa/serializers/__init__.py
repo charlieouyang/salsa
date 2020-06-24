@@ -2,8 +2,14 @@ from flask import current_app as app
 from marshmallow import fields
 from marshmallow_sqlalchemy import ModelSchema as BaseSerializer
 
-from salsa.models import ExclusionSet
-from salsa.models import UserAccount, UserRole
+from salsa.models import (UserAccount,
+                          UserRole,
+                          Product,
+                          Purchase,
+                          Listing,
+                          Review,
+                          Category,
+                          ProductCategory)
 
 
 class PrettyField(fields.Field):
@@ -14,21 +20,92 @@ class PrettyField(fields.Field):
 
 
 NON_EMBEDDED_FIELDS = {
-    'ExclusionSetSerializer': ('id', 'name'),
-    'UserAccountSerializer': ('id', 'name', 'email', 'user_role_id', 'created_at', 'updated_at'),
+    'ProductSerializer': ('id', 'active', 'name', 'description', 'image_urls', 'user_id', 'created_at', 'updated_at'),
+    'ListingSerializer': ('id', 'active', 'name', 'description', 'price', 'amount_available', 'user_id', 'product_id', 'created_at', 'updated_at'),
+    'PurchaseSerializer': ('id', 'amount', 'notes', 'user_id', 'listing_id', 'created_at', 'updated_at'),
+    'ReviewSerializer': ('id', 'name', 'description', 'numstars', 'user_id', 'product_id', 'purchase_id', 'created_at', 'updated_at'),
+    'UserAccountSerializer': ('id', 'name', 'email', 'user_role_id', 'extradata', 'created_at', 'updated_at'),
     'UserRoleSerializer': ('id', 'title', 'description'),
+    'CategorySerializer': ('id', 'name'),
+    'ProductCategorySerializer': ('id', 'product_id', 'category_id', 'created_at', 'updated_at'),
 }
 
+# things we don't want to show by default
 EXCLUDE_FIELDS = {
-    'UserAccountSerializer': ['password_hashed'],
+    'UserAccountSerializer': ['password_hashed', 'listings', 'products',
+                              'reviews', 'purchases'],
+    'ListingSerializer': ['purchases'],
+    'CategorySerializer': ['product_categories'],
 }
 
 
-class ExclusionSetSerializer(BaseSerializer):
+class ProductSerializer(BaseSerializer):
     id = fields.UUID()
+    user_id = fields.UUID()
+
+    user_account = fields.Nested(
+        'UserAccountSerializer',
+        only=NON_EMBEDDED_FIELDS['UserAccountSerializer'])
 
     class Meta:
-        model = ExclusionSet
+        model = Product
+
+
+class ListingSerializer(BaseSerializer):
+    id = fields.UUID()
+    user_id = fields.UUID()
+    product_id = fields.UUID()
+
+    user_account = fields.Nested(
+        'UserAccountSerializer',
+        only=NON_EMBEDDED_FIELDS['UserAccountSerializer'])
+
+    product = fields.Nested(
+        'ProductSerializer',
+        only=NON_EMBEDDED_FIELDS['ProductSerializer'])
+
+    class Meta:
+        model = Listing
+
+
+class PurchaseSerializer(BaseSerializer):
+    id = fields.UUID()
+    user_id = fields.UUID()
+    listing_id = fields.UUID()
+
+    user_account = fields.Nested(
+        'UserAccountSerializer',
+        only=NON_EMBEDDED_FIELDS['UserAccountSerializer'])
+
+    listing = fields.Nested(
+        'ListingSerializer',
+        only=NON_EMBEDDED_FIELDS['ListingSerializer'])
+
+    class Meta:
+        model = Purchase
+
+
+class ReviewSerializer(BaseSerializer):
+    id = fields.UUID()
+    user_id = fields.UUID()
+    purchase_id = fields.UUID()
+    product_id = fields.UUID()
+
+    user_account = fields.Nested(
+        'UserAccountSerializer',
+        only=NON_EMBEDDED_FIELDS['UserAccountSerializer'])
+
+    purchase = fields.Nested(
+        'PurchaseSerializer',
+        only=NON_EMBEDDED_FIELDS['PurchaseSerializer'])
+
+    product = fields.Nested(
+        'ProductSerializer',
+        only=NON_EMBEDDED_FIELDS['ProductSerializer'])
+
+    class Meta:
+        model = Review
+
 
 class UserAccountSerializer(BaseSerializer):
     id = fields.UUID()
@@ -40,6 +117,7 @@ class UserAccountSerializer(BaseSerializer):
 
     class Meta:
         model = UserAccount
+
 
 class UserRoleSerializer(BaseSerializer):
     id = fields.UUID()
@@ -53,33 +131,24 @@ class UserRoleSerializer(BaseSerializer):
         model = UserRole
 
 
+class CategorySerializer(BaseSerializer):
+    id = fields.UUID()
 
-# class KeywordSerializer(BaseSerializer):
-#     keyword_set_id = fields.UUID()
-#     keyword_set = fields.Nested(
-#         'KeywordSetSerializer',
-#         only=NON_EMBEDDED_FIELDS['KeywordSetSerializer'])
-#     keyclass_id = fields.UUID()
-#     keyclass = fields.Nested(
-#         'KeywordClassSerializer',
-#         only=NON_EMBEDDED_FIELDS['KeywordClassSerializer'])
-#     industry = fields.Nested(
-#         'IndustrySerializer', only=NON_EMBEDDED_FIELDS['IndustrySerializer'])
-#     industry_id = fields.UUID()
-#     owner = fields.Nested(
-#         'OwnerSerializer', only=NON_EMBEDDED_FIELDS['OwnerSerializer'])
-#     owner_id = fields.UUID()
-
-#     class Meta:
-#         model = Keyword
-#         exclude = ('keyword_subscriptions', 'keyword_datasource')
+    class Meta:
+        model = Category
 
 
-# class KeywordClassSerializer(BaseSerializer):
-#     keywords = fields.Nested(
-#         'KeywordSerializer',
-#         many=True,
-#         only=NON_EMBEDDED_FIELDS['KeywordSerializer'])
+class ProductCategorySerializer(BaseSerializer):
+    id = fields.UUID()
+    product_id = fields.UUID()
+    category_id = fields.UUID()
 
-#     class Meta:
-#         model = KeywordClass
+    product = fields.Nested(
+        'ProductSerializer',
+        only=NON_EMBEDDED_FIELDS['ProductSerializer'])
+    category = fields.Nested(
+        'CategorySerializer',
+        only=NON_EMBEDDED_FIELDS['CategorySerializer'])
+
+    class Meta:
+        model = ProductCategory

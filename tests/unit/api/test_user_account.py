@@ -38,6 +38,7 @@ class TestUserAccountsController(ApiUnitTestCase, SalsaTestCase):
             'name': 'test_name',
             'email': 'test_email',
             'password': 'test_pass',
+            'extradata': '{"data": "me"}',
             'user_role_id': str(user_role.id)
         }
         expected = body.copy()
@@ -53,6 +54,7 @@ class TestUserAccountsController(ApiUnitTestCase, SalsaTestCase):
             'user_name': 'name1',
             'name': 'test_name',
             'email': 'test_email',
+            'extradata': '{"data": "me"}',
             'password': 'test_pass',
             'user_role_id': str(user_role.id)
         }
@@ -150,6 +152,7 @@ class TestUserAccountsPermissions(PermissionsTestCase, SalsaTestCase):
             'user_name': 'user_name_test',
             'name': 'name_test',
             'email': 'email_test',
+            'extradata': '{"data": "me"}',
             'password': 'pass_test'
         }
 
@@ -201,16 +204,6 @@ class TestUserAccountsPermissions(PermissionsTestCase, SalsaTestCase):
             self.assertEqual(res.status_code, 404)
             self.assertEqual(
                 res.json['detail'], f'User account with id {str(user_try_to_update.id)} not found')
-
-    # delete is only for admins
-    def test_delete(self):
-        self._setup_user_himself_and_roles()
-
-        res = self.api.delete('', token_info=self.user_himself)
-
-        self.assertIsNotNone(res.data)
-        self.assertEqual(res.status_code, 403)
-        self.assertEqual(res.json['detail'], 'Insufficient permissions')
 
 
 if __name__ == '__main__':

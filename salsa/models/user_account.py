@@ -15,6 +15,7 @@ class UserAccount(BaseModel):
     user_name = db.Column(db.String(255), unique=True, nullable=False)
     name = db.Column(db.String(255), unique=False, nullable=False)
     email = db.Column(db.String(255), unique=False, nullable=False)
+    extradata = db.Column(db.String(255), unique=False, nullable=True)
     password_hashed = db.Column(db.String(255), nullable=False)
     user_role_id = db.Column(GUID,
                              db.ForeignKey('user_role.id'),
@@ -28,8 +29,29 @@ class UserAccount(BaseModel):
                                 foreign_keys=user_role_id,
                                 back_populates='user_accounts')
 
+    products = db.relationship(
+        'Product',
+        cascade="delete",
+        back_populates="user_account",
+        lazy='dynamic')
+    listings = db.relationship(
+        'Listing',
+        cascade="delete",
+        back_populates="user_account",
+        lazy='dynamic')
+    purchases = db.relationship(
+        'Purchase',
+        cascade="delete",
+        back_populates="user_account",
+        lazy='dynamic')
+    reviews = db.relationship(
+        'Review',
+        cascade="delete",
+        back_populates="user_account",
+        lazy='dynamic')
+
     def update(self, **kwargs):
-        allowed_attrs = ['user_name', 'name', 'email', 'password_hashed']
+        allowed_attrs = ['user_name', 'name', 'email', 'password_hashed', 'extradata']
         for k, v in kwargs.items():
             if k in allowed_attrs and v is not None:
                 setattr(self, k, v)
