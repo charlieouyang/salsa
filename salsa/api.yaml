@@ -1134,6 +1134,15 @@ paths:
           schema:
             format: uuid4
             type: string
+        - name: user_as
+          in: query
+          description: 'Get purchases for this user as a buyer or seller'
+          required: true
+          schema:
+            type: string
+            enum:
+              - buyer
+              - seller
       description: Retrieve all purchases
       operationId: salsa.api.purchases.retrieve_list
       responses:

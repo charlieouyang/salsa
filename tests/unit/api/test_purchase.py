@@ -134,11 +134,19 @@ class TestPurchasesPermissions(PermissionsTestCase, SalsaTestCase):
             self.assertEqual(
                 res.json['detail'], f'Purchase with id {str(purchase_to_fetch.id)} not found')
 
+    def test_list_fail_no_user_as_passed(self):
+        self._setup_user_himself_and_roles()
+
+        res = self.api.retrieve_list(token_info=self.user_himself)
+
+        self.assertIsNotNone(res.data)
+        self.assertEqual(res.status_code, 400)
 
     def test_list(self):
         self._setup_user_himself_and_roles()
 
-        res = self.api.retrieve_list(token_info=self.user_himself)
+        res = self.api.retrieve_list(token_info=self.user_himself,
+                                     user_as='buyer')
 
         self.assertIsNotNone(res.data)
         self.assertEqual(res.status_code, 200)
@@ -148,11 +156,18 @@ class TestPurchasesPermissions(PermissionsTestCase, SalsaTestCase):
     # purchase created by another normal user.. get purchase fail
     # purchase created by another admin user.. get purchase fail
     @parameterized.expand([
-        (True, None, True),
-        (False, 'normal', False),
-        (False, 'admin', False),
+        (True, None, 'buyer', True),
+        (False, 'normal', 'buyer', False),
+        (False, 'admin', 'buyer', False),
+        (True, None, 'seller', True),
+        (False, 'normal', 'seller', False),
+        (False, 'admin', 'seller', False),
     ])
-    def test_list_with_listing_id(self, his_own_purchase, other_user_type, is_successful):
+    def test_list_with_listing_id(self,
+                                  his_own_purchase,
+                                  other_user_type,
+                                  user_as,
+                                  is_successful):
         self._setup_user_himself_and_roles()
         
         if his_own_purchase:
@@ -177,7 +192,9 @@ class TestPurchasesPermissions(PermissionsTestCase, SalsaTestCase):
                     listing=listing,
                     user_account=another_user)
 
-        res = self.api.retrieve_list(listing_id=listing.id, token_info=self.user_himself)
+        res = self.api.retrieve_list(listing_id=listing.id,
+                                     token_info=self.user_himself,
+                                     user_as='buyer')
 
         if is_successful:
             self.assertIsNotNone(res.data)
@@ -188,6 +205,60 @@ class TestPurchasesPermissions(PermissionsTestCase, SalsaTestCase):
             self.assertIsNotNone(res.data)
             self.assertEqual(res.status_code, 200)
             self.assertEqual(res.json, [])
+
+    def test_list_with_as_user_buyer(self):
+        self._setup_user_himself_and_roles()
+
+        listings = [ListingFactory() for _ in range(5)]
+
+        # Purchases that this user made on listings
+        purchases_to_fetch = []
+        for listing_ in listings:
+            purchases_to_fetch.append(
+                PurchaseFactory(
+                    listing=listing_,
+                    user_account=self.user_himself_inst))
+
+        # Purchases other ppl made on this user's listings.. Should
+        # not be returned
+        his_listing = ListingFactory(user_account=self.user_himself_inst)
+        PurchaseFactory(listing=his_listing)
+
+        res = self.api.retrieve_list(token_info=self.user_himself,
+                                     user_as='buyer')
+
+        self.assertIsNotNone(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json), 5)
+
+        for idx in range(5):
+            self.assertEqual(res.json[idx]['id'],
+                             str(purchases_to_fetch[idx].id))
+
+    def test_list_with_as_user_seller(self):
+        self._setup_user_himself_and_roles()
+
+        # Purchases other ppl made on this user's listings
+        his_listing = ListingFactory(user_account=self.user_himself_inst)
+        purchases_to_fetch = [PurchaseFactory(listing=his_listing)
+                              for _ in range(5)]
+
+        # Purchases that this user made on other listings.. Should
+        # not be returned
+        other_listings = [ListingFactory(), ListingFactory()]
+        PurchaseFactory(listing=other_listings[0])
+        PurchaseFactory(listing=other_listings[1])
+
+        res = self.api.retrieve_list(token_info=self.user_himself,
+                                     user_as='seller')
+
+        self.assertIsNotNone(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json), 5)
+
+        for idx in range(5):
+            self.assertEqual(res.json[idx]['id'],
+                             str(purchases_to_fetch[idx].id))
 
     def test_list_empty(self):
         pass
