@@ -12,3 +12,9 @@ User27995691s-MacBook-Pro:salsa user27995691$ docker-compose run --rm -p 5001:50
 [root@salsa salsa]# make db-reset
 [root@salsa salsa]# python3 -m unittest -v tests.unit.api.test_listing.TestListingsController.test_list_with_name
 [root@salsa salsa]# python3 -m unittest discover -s ./tests/unit/ -v
+
+
+
+PRODUCTION db
+PGPASSWORD={ADD PASSWORD} psql -d salsa -h 0.0.0.0 -U salsa_api -c 'ALTER SCHEMA public OWNER TO salsa_api;'
+PGPASSWORD={ADD PASSWORD} psql -d salsa -f salsa/db/salsa.sql -h 0.0.0.0 -U salsa_api

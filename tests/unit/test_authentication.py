@@ -47,6 +47,7 @@ class TestAuthentication(SalsaTestCase):
                 res = login()
                 self.assertEqual(res.get('status_code'), 200)
                 self.assertTrue(res.get('token'))
+                self.assertTrue(res.get('user_account_id'))
             else:
                 with self.assertRaises(BadRequest):
                     login()

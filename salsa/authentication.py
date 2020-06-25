@@ -62,7 +62,7 @@ def login():
     }
 
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
-    return {'status_code': 200, 'token': token}
+    return {'status_code': 200, 'token': token, 'user_account_id': str(user.id)}
 
 def verify_token(token):
     try:
