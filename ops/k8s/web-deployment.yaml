@@ -37,7 +37,7 @@ spec:
             - name: SALSA_AUTH_SALT
               valueFrom:
                 secretKeyRef:
-                  name: api_auth_salt
+                  name: apiauthsalt
                   key: AUTH_SALT
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.16

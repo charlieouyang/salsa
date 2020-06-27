@@ -18,3 +18,6 @@ User27995691s-MacBook-Pro:salsa user27995691$ docker-compose run --rm -p 5001:50
 PRODUCTION db
 PGPASSWORD={ADD PASSWORD} psql -d salsa -h 0.0.0.0 -U salsa_api -c 'ALTER SCHEMA public OWNER TO salsa_api;'
 PGPASSWORD={ADD PASSWORD} psql -d salsa -f salsa/db/salsa.sql -h 0.0.0.0 -U salsa_api
+
+kubectl create secret generic apiauthsalt --from-literal=AUTH_SALT=<password_string>
+
