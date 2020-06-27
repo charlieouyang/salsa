@@ -26,6 +26,7 @@ services:
       - SALSA_DB_HOST=postgres
       - PGPASSWORD=salsa
       - PGHOST=postgres
+      - SALSA_AUTH_SALT=salsa_salt_dev
     expose:
       - "5000"
     links:

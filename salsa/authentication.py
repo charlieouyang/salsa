@@ -1,5 +1,6 @@
 # Authentication
 import time
+import os
 
 import connexion
 import six
@@ -17,8 +18,8 @@ from salsa.api.resources.helpers import (serialize_instance,
                                          get_hashed_password)
 
 JWT_ISSUER = 'com.salsa.connexion'
-JWT_SECRET = 'change_this_123'
-JWT_LIFETIME_SECONDS = 60*60*2 #2 hours
+JWT_SECRET = os.getenv('SALSA_AUTH_SALT', 'did_not_work')
+JWT_LIFETIME_SECONDS = 60*60*24 #24 hours
 JWT_ALGORITHM = 'HS256'
 
 INCORRECT_LOGIN_INFO_MSG = 'Username or password incorrect'
@@ -61,11 +62,16 @@ def login():
         'prm': serialize_instance(role)
     }
 
+    print('login function JWT_SECRET')
+    print(JWT_SECRET)
+
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
     return {'status_code': 200, 'token': token, 'user_account_id': str(user.id)}
 
 def verify_token(token):
     try:
+        print('verify_token function JWT_SECRET')
+        print(JWT_SECRET)
         decoded = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         user_name = T.get_in(['usr', 'user_name'], decoded)
