@@ -67,10 +67,6 @@ class TestUserAccountsController(ApiUnitTestCase, SalsaTestCase):
         }
         self._put_valid(body)
 
-    def test_put_invalid(self):
-        UserAccountFactory(user_name='name_1')
-        self._put_invalid({'user_name': 'name_1'}, err='{} already exists')
-
     def test_put_not_found(self):
         self._put_not_found({'name': 'name1'})
 

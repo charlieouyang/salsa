@@ -12,6 +12,7 @@ from salsa.exc import InvalidRequest
 
 BAD_AS_ERROR = ('Invalid "user_as" parameter is passed in. '
                 'Please use [buyer] or [seller]')
+UPDATE_SELLER_COMP_ERROR = ('Invalid inputs to update seller_complete')
 
 @decorate_all_methods(sqlalchemy_exception_handler)
 class PurchaseResource(BaseResource):
@@ -59,6 +60,23 @@ class PurchaseResource(BaseResource):
     def update(self, purchase_id, **kwargs):
         Purchase.can_update_ids_by_user([purchase_id], get_user(kwargs))
         updated = kwargs.get('body')
+
+        if not is_user_admin(get_user(kwargs)):
+            # update buyer_complete -> Only updatable by buyer
+            #        by checking the user_id of purchase...
+            if updated.get('buyer_complete') is not None:
+                Purchase.belongs_to_user(purchase_id, get_user(kwargs))
+
+            # update seller_complete -> Only updatable by seller
+            #        by checking the user_id of the listing
+            if updated.get('seller_complete') is not None:
+                purchases = self.model.query.filter(self.model.id == purchase_id).\
+                                             join(Listing).all()
+                if (len(purchases) != 1 or
+                    str(purchases[0].listing.user_id) != get_user_id_from_user(get_user(kwargs))):
+                    raise InvalidRequest(UPDATE_SELLER_COMP_ERROR)
+
+
         return super().update(purchase_id, updated)
 
 

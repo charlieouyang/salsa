@@ -62,6 +62,16 @@ class TestPurchasesController(ApiUnitTestCase, SalsaTestCase):
         }
         self._put_valid(body)
 
+        body = {
+            'buyer_complete': True,
+        }
+        self._put_valid(body)
+
+        body = {
+            'seller_complete': True,
+        }
+        self._put_valid(body)
+
     def test_put_not_found(self):
         self._put_not_found({'amount': 5})
 
@@ -328,6 +338,45 @@ class TestPurchasesPermissions(PermissionsTestCase, SalsaTestCase):
             self.assertEqual(res.status_code, 404)
             self.assertEqual(
                 res.json['detail'], f'Purchase with id {str(purchase_to_update.id)} not found')
+
+    # purchase created by himself.. update buyer_complete success
+    # purchase created by himself.. update seller_complete fail
+    # listing of purchase created by himself.. update buyer_complete fail
+    # listing of purchase created by himself.. update seller_complete success
+    @parameterized.expand([
+        ('purchase', 'buyer_complete', True, 200),
+        ('purchase', 'seller_complete', False, 400),
+        ('listing', 'buyer_complete', False, 404),
+        ('listing', 'seller_complete', True, 200),
+    ])
+    def test_update_complete(self, he_created, purchase_attribute, is_successful, status_code):
+        self._setup_user_himself_and_roles()
+
+        if he_created == 'purchase':
+            listing = ListingFactory()
+            purchase_to_update = PurchaseFactory(
+                listing=listing,
+                user_account=self.user_himself_inst)
+        elif he_created == 'listing':
+            listing = ListingFactory(
+                user_account=self.user_himself_inst)
+            purchase_to_update = PurchaseFactory(
+                listing=listing)
+        else:
+            raise ValueError()
+
+        res = self.api.update(purchase_to_update.id,
+                              body={purchase_attribute: True},
+                              token_info=self.user_himself)
+
+        if is_successful:
+            self.assertIsNotNone(res.data)
+            self.assertEqual(res.status_code, status_code)
+            self.assertEqual(res.json['id'], str(purchase_to_update.id))
+            self.assertEqual(res.json[purchase_attribute], True)
+        else:
+            self.assertIsNotNone(res.data)
+            self.assertEqual(res.status_code, status_code)
 
 
 if __name__ == '__main__':

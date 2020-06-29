@@ -51,7 +51,7 @@ class UserAccount(BaseModel):
         lazy='dynamic')
 
     def update(self, **kwargs):
-        allowed_attrs = ['user_name', 'name', 'email', 'password_hashed', 'extradata']
+        allowed_attrs = ['name', 'email', 'password_hashed', 'extradata']
         for k, v in kwargs.items():
             if k in allowed_attrs and v is not None:
                 setattr(self, k, v)

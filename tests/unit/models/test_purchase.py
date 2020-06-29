@@ -18,6 +18,8 @@ class PurchaseTest(SalsaTestCase):
     def test_valid_listing(self):
         purchase = PurchaseFactory()
 
+        self.assertEqual(purchase.buyer_complete, False)
+        self.assertEqual(purchase.seller_complete, False)
         self.assertEqual([purchase], db.session.query(Purchase).all())
 
     def test_find_by_id_success(self):

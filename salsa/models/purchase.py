@@ -22,6 +22,8 @@ class Purchase(BaseModel):
         db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    buyer_complete = db.Column(db.Boolean, nullable=False, default=False)
+    seller_complete = db.Column(db.Boolean, nullable=False, default=False)
 
     user_id = db.Column(GUID,
                         db.ForeignKey('user_account.id'),
@@ -44,7 +46,7 @@ class Purchase(BaseModel):
         lazy='dynamic')
 
     def update(self, **kwargs):
-        allowed_attrs = ['amount', 'notes']
+        allowed_attrs = ['amount', 'notes', 'buyer_complete', 'seller_complete']
         for k, v in kwargs.items():
             if k in allowed_attrs and v is not None:
                 setattr(self, k, v)

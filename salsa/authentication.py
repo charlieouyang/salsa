@@ -62,16 +62,11 @@ def login():
         'prm': serialize_instance(role)
     }
 
-    print('login function JWT_SECRET')
-    print(JWT_SECRET)
-
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
     return {'status_code': 200, 'token': token, 'user_account_id': str(user.id)}
 
 def verify_token(token):
     try:
-        print('verify_token function JWT_SECRET')
-        print(JWT_SECRET)
         decoded = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
         user_name = T.get_in(['usr', 'user_name'], decoded)

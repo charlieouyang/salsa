@@ -30,7 +30,7 @@ class ReviewResource(BaseResource):
         purchase_id = new_review.get('purchase_id')
         product_id = new_review.get('product_id')
 
-        # Validate the purchase_id to make sure purchase it is
+        # Validate the purchase_id to make sure purchase is
         # made by this user
         Purchase.belongs_to_user(purchase_id, get_user(kwargs))
 

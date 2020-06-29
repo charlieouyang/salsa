@@ -185,7 +185,7 @@ INSERT INTO public.listing (id , active , name , description , price , amount_av
 --
 -- PURCHASE charlieouyang buy beef short rib from susannajiang
 --
-INSERT INTO public.purchase (id , amount , notes, created_at , updated_at , user_id , listing_id) VALUES ('13c1e58b-7ee0-4d70-9fcb-e694cfe955b7', 10, 'Will pickup myself', NOW(), NOW(), '2ef9f33e-291a-4fb0-83db-d25031228986', '5b9e48ef-70d6-4e2a-b701-fb96e25d9e09');
+INSERT INTO public.purchase (id , amount , notes, created_at , updated_at , user_id , listing_id, buyer_complete, seller_complete) VALUES ('13c1e58b-7ee0-4d70-9fcb-e694cfe955b7', 10, 'Will pickup myself', NOW(), NOW(), '2ef9f33e-291a-4fb0-83db-d25031228986', '5b9e48ef-70d6-4e2a-b701-fb96e25d9e09', 'f', 'f');
 --
 -- REVIEW for purchase
 --
@@ -194,7 +194,7 @@ INSERT INTO public.review (id , name , description , numstars , created_at , upd
 --
 -- PURCHASE kevinouyang buy beef short rib from susannajiang
 --
-INSERT INTO public.purchase (id , amount , notes,  created_at , updated_at , user_id , listing_id) VALUES ('deee3c83-637a-47dc-998e-9022268cff25', 20, 'I will call you to cooridinate the drop off', NOW(), NOW(), 'd6e517e1-75d7-48ca-9970-7e739d018eaa', '5b9e48ef-70d6-4e2a-b701-fb96e25d9e09');
+INSERT INTO public.purchase (id , amount , notes,  created_at , updated_at , user_id , listing_id, buyer_complete, seller_complete) VALUES ('deee3c83-637a-47dc-998e-9022268cff25', 20, 'I will call you to cooridinate the drop off', NOW(), NOW(), 'd6e517e1-75d7-48ca-9970-7e739d018eaa', '5b9e48ef-70d6-4e2a-b701-fb96e25d9e09', 'f', 'f');
 --
 -- REVIEW for purchase
 --
@@ -203,7 +203,7 @@ INSERT INTO public.review (id , name , description , numstars , created_at , upd
 --
 -- PURCHASE kevinouyang buy bell peppers from susannajiang
 --
-INSERT INTO public.purchase (id , amount , notes,  created_at , updated_at , user_id , listing_id) VALUES ('9df2b070-c6be-4d8c-8880-4688dfc6acbc', 3, 'I will call you to cooridinate the drop off', NOW(), NOW(), 'd6e517e1-75d7-48ca-9970-7e739d018eaa', 'e74e7ab4-150d-4039-8e8e-f78674c5f715');
+INSERT INTO public.purchase (id , amount , notes,  created_at , updated_at , user_id , listing_id, buyer_complete, seller_complete) VALUES ('9df2b070-c6be-4d8c-8880-4688dfc6acbc', 3, 'I will call you to cooridinate the drop off', NOW(), NOW(), 'd6e517e1-75d7-48ca-9970-7e739d018eaa', 'e74e7ab4-150d-4039-8e8e-f78674c5f715', 'f', 'f');
 --
 -- REVIEW for purchase
 --
@@ -212,7 +212,7 @@ INSERT INTO public.review (id , name , description , numstars , created_at , upd
 --
 -- PURCHASE charlieouyang buy beef steak from susannajiang
 --
-INSERT INTO public.purchase (id , amount , notes,  created_at , updated_at , user_id , listing_id) VALUES ('5c4d84ee-d757-4f03-b23d-f50ea17e17cd', 3, 'Will pickup myself', NOW(), NOW(), '2ef9f33e-291a-4fb0-83db-d25031228986', '1e35025a-ae46-4f80-88ba-f2904730c190');
+INSERT INTO public.purchase (id , amount , notes,  created_at , updated_at , user_id , listing_id, buyer_complete, seller_complete) VALUES ('5c4d84ee-d757-4f03-b23d-f50ea17e17cd', 3, 'Will pickup myself', NOW(), NOW(), '2ef9f33e-291a-4fb0-83db-d25031228986', '1e35025a-ae46-4f80-88ba-f2904730c190', 'f', 'f');
 --
 -- REVIEW for purchase
 --
@@ -221,7 +221,7 @@ INSERT INTO public.review (id , name , description , numstars , created_at , upd
 --
 -- PURCHASE susannajiang buy macbook from charlieouyang
 --
-INSERT INTO public.purchase (id , amount , notes,  created_at , updated_at , user_id , listing_id) VALUES ('d859b218-3509-4216-96a6-7844e6f00379', 1, 'I will come pick it up in 1 week', NOW(), NOW(), 'b3793c45-0b19-433d-a24d-9e9cd5952adf', '43ed94d0-71a6-45a4-8dc7-effdbdb7aa45');
+INSERT INTO public.purchase (id , amount , notes,  created_at , updated_at , user_id , listing_id, buyer_complete, seller_complete) VALUES ('d859b218-3509-4216-96a6-7844e6f00379', 1, 'I will come pick it up in 1 week', NOW(), NOW(), 'b3793c45-0b19-433d-a24d-9e9cd5952adf', '43ed94d0-71a6-45a4-8dc7-effdbdb7aa45', 'f', 'f');
 --
 -- REVIEW for purchase
 --
