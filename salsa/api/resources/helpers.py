@@ -101,13 +101,14 @@ def get_serializer(kls, embed=None):
     all_excludes = default_excludes.union(extra_excludes) - set(embed)
 
     serializer = serializer_cls(exclude=all_excludes)
+
     return serializer
 
 
 def serialize_instance(instance, embed=None):
     """Convert model instance to dict for JSON response serialization
 
-    :param salsa.models.about_face_base.BaseModel instance:
+    :param salsa.models.salsa_base.BaseModel instance:
     :param str embed: CSV of names of relations to embed in the response e.g.
         'curator,keywords' for an salsa.models.Owner
     """
@@ -188,6 +189,7 @@ def serialize_return(**overrides):
             if not isinstance(instances, Iterable):
                 return reply(
                     body=serialize_instance(instances, embed), **overrides)
+
             return reply(
                 body=serialize_instances(
                     instances, embed=embed, page=page),

@@ -16,7 +16,8 @@ class ProductResource(BaseResource):
 
     @serialize_return(status=200)
     def retrieve(self, product_id, **kwargs):
-        return self.model.find_by_id(product_id)
+        res = self.model.find_by_id(product_id)
+        return res
 
     @serialize_return(status=200)
     def retrieve_list(self, **kwargs):

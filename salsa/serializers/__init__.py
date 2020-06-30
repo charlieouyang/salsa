@@ -20,7 +20,7 @@ class PrettyField(fields.Field):
 
 
 NON_EMBEDDED_FIELDS = {
-    'ProductSerializer': ('id', 'active', 'name', 'description', 'image_urls', 'user_id', 'created_at', 'updated_at'),
+    'ProductSerializer': ('id', 'active', 'name', 'description', 'image_urls', 'user_id', 'avg_numstars', 'created_at', 'updated_at'),
     'ListingSerializer': ('id', 'active', 'name', 'description', 'price', 'amount_available', 'user_id', 'product_id', 'created_at', 'updated_at'),
     'PurchaseSerializer': ('id', 'amount', 'notes', 'user_id', 'listing_id', 'created_at', 'updated_at'),
     'ReviewSerializer': ('id', 'name', 'description', 'numstars', 'user_id', 'product_id', 'purchase_id', 'created_at', 'updated_at'),
@@ -42,6 +42,7 @@ EXCLUDE_FIELDS = {
 class ProductSerializer(BaseSerializer):
     id = fields.UUID()
     user_id = fields.UUID()
+    avg_numstars = fields.Number()
 
     user_account = fields.Nested(
         'UserAccountSerializer',

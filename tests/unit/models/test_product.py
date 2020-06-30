@@ -8,7 +8,7 @@ from salsa.models import UserAccount, Product
 from salsa.exc import ResourceNotFoundError
 from tests import SalsaTestCase
 from tests import admin_user, basic_user
-from tests.factories import UserAccountFactory, ProductFactory
+from tests.factories import UserAccountFactory, ProductFactory, ReviewFactory
 
 
 class ProductTest(SalsaTestCase):
@@ -17,6 +17,16 @@ class ProductTest(SalsaTestCase):
 
         self.assertEqual([product], db.session.query(Product).all())
         self.assertEqual(product.name, 'product_name')
+        self.assertEqual(product.avg_numstars, -1)
+
+    def test_valid_product_avg_numstars(self):
+        product = ProductFactory(name='product_name')
+        ReviewFactory(product=product, numstars=1)
+        ReviewFactory(product=product, numstars=2)
+        ReviewFactory(product=product, numstars=3)
+
+        self.assertEqual(product.name, 'product_name')
+        self.assertEqual(product.avg_numstars, 2)
 
     def test_find_by_id_success(self):
         product = ProductFactory(name='product_name')

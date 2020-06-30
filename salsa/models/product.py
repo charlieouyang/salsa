@@ -1,6 +1,8 @@
 import toolz as T
 from datetime import datetime
 from sqlalchemy import types
+from sqlalchemy.ext.hybrid import hybrid_property
+from statistics import mean
 
 from salsa.db import db
 from salsa.db.types import GUID
@@ -44,6 +46,19 @@ class Product(BaseModel):
     product_categories = db.relationship(
         'ProductCategory',
         back_populates="product")
+
+    @hybrid_property
+    def avg_numstars(self):
+        total_stars = 0
+        count_stars = 0
+        for review_ in self.reviews:
+            total_stars += review_.numstars
+            count_stars += 1
+
+        if count_stars > 0:
+            return total_stars / count_stars
+        else:
+            return -1
 
     def update(self, **kwargs):
         allowed_attrs = ['active', 'name', 'description', 'image_urls']
