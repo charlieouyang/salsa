@@ -22,11 +22,7 @@ class UserAccountResource(BaseResource):
 
     @serialize_return(status=200)
     def retrieve(self, user_account_id, **kwargs):
-        res = self.model.find_by_ids_for_user([user_account_id], get_user(kwargs))
-        if len(res) > 0:
-            return res[0]
-        else:
-            return {}
+        return self.model.find_by_id(user_account_id)
 
     @only_admin
     @serialize_return(status=200)

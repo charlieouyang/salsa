@@ -94,12 +94,12 @@ class TestUserAccountsPermissions(PermissionsTestCase, SalsaTestCase):
         }
 
     # Normal user.. get himself success
-    # Normal user.. get someone else normal fail
-    # Normal user.. get someone else admin fail
+    # Normal user.. get someone else normal success
+    # Normal user.. get someone else admin success
     @parameterized.expand([
         ('normal', True),
-        ('admin', False),
-        ('normal', False),
+        ('admin', True),
+        ('normal', True),
     ])
     def test_get(self, user_type, retrieve_himself):
         self._setup_user_himself_and_roles()
@@ -113,15 +113,9 @@ class TestUserAccountsPermissions(PermissionsTestCase, SalsaTestCase):
                 user_try_to_fetch = UserAccountFactory(user_role=self.admin_role)
 
         res = self.api.retrieve(user_try_to_fetch.id, token_info=self.user_himself)
-        if retrieve_himself:
-            self.assertIsNotNone(res.data)
-            self.assertEqual(res.status_code, 200)
-            self.assertEqual(res.json['id'], str(user_try_to_fetch.id))
-        else:
-            self.assertIsNotNone(res.data)
-            self.assertEqual(res.status_code, 404)
-            self.assertEqual(
-                res.json['detail'], f'User account with id {str(user_try_to_fetch.id)} not found')
+        self.assertIsNotNone(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json['id'], str(user_try_to_fetch.id))
 
     def test_list(self):
         self._setup_user_himself_and_roles()
