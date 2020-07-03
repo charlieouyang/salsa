@@ -51,7 +51,7 @@ header .header_logo {
     flex-grow: 1;
 }
 header .header_logo_venue {
-    font-size: 40px;
+    font-size: 25px;
 }
 
 header .header_logo_title {
@@ -65,7 +65,7 @@ header .header_logo_title {
 footer {
     padding: 20px 0px;
     text-align: center;
-    font-size: 60px;
+    font-size: 35px;
     color:#ffffff;
     background: red;
 }

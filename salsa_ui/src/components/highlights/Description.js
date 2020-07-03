@@ -53,13 +53,10 @@ const Description = (props) => {
                                   <Typography variant="body2" color="textSecondary" component="span">
                                     <div className="description_text">
                                         <p>
-                                            Online orders, Group orders, Group shopping become more and more popular in these days.
+                                        Easy Buying Selling - can be together
                                         </p>
                                         <p>
-                                        Do you have troublesome to track what and where you ordered from, or who and what ordered from your store? Did you experience missing orders, orders without owners as result of lacking good tracking system?
-                                        </p>
-                                        <p>
-                                        Heli Together Strong can help you. Above troublesome will go away.
+                                        Simply Download this App
                                         </p>
                                     </div>
                                   </Typography>
@@ -89,16 +86,10 @@ const Description = (props) => {
                                   <Typography variant="body2" color="textSecondary" component="span">
                                     <div className="description_text">
                                         <p>
-                                            网购， 团购, 代购当今越来越流行了。
+                                        买卖轻轻松松在一起
                                         </p>
                                         <p>
-                                            头疼的事情也随之而来，不记得买了什么，在哪个店买的；
-                                            或者你的顾客是谁，在你店里买了什么？ 你经历过漏单，
-                                            订的单货没收到过， 或者顾客走单的？
-                                        </p>
-                                        <p>
-                                            有了合力这个系统， 头痛的事情就拜拜了。 买的开心，
-                                            卖的轻松！
+                                        简单下载者App
                                         </p>
                                     </div>
                                   </Typography>

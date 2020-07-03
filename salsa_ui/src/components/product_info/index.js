@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Zoom from 'react-reveal/Zoom';
+import Grid from '@material-ui/core/Grid';
 
 import icon_calendar from '../../resources/images/icons/calendar.png';
 import icon_location from '../../resources/images/icons/location.png';
@@ -14,7 +15,15 @@ const ProductInfo = () => {
         <div className="bck_black">
             <div className="center_wrapper">
                 <div className="vn_wrapper">
-                    <Zoom duration={500}>
+
+                    <Grid
+                        container
+                        spacing={1}
+                        direction="row"
+                        justify="center"
+                        alignItems="center"
+                    >
+                    <Grid item xs={4} style={{minWidth: "300px"}}>
                         <div className="vn_item">
                             <div className="vn_outer">
                                 <div className="vn_inner">
@@ -34,9 +43,8 @@ const ProductInfo = () => {
                                 </div>
                             </div>
                         </div>
-                    </Zoom>
-
-                    <Zoom duration={500} delay={500}>
+                    </Grid>
+                    <Grid item xs={4} style={{minWidth: "300px"}}>
                         <div className="vn_item">
                             <div className="vn_outer">
                                 <div className="vn_inner">
@@ -56,9 +64,9 @@ const ProductInfo = () => {
                                 </div>
                             </div>
                         </div>
-                    </Zoom>
+                    </Grid>
 
-                    <Zoom duration={500} delay={1000}>
+                    <Grid item xs={4} style={{minWidth: "300px"}}>
                         <div className="vn_item">
                             <div className="vn_outer">
                                 <div className="vn_inner">
@@ -78,7 +86,8 @@ const ProductInfo = () => {
                                 </div>
                             </div>
                         </div>
-                    </Zoom>
+                    </Grid>
+                    </Grid>
 
                     <div></div>
                 </div>

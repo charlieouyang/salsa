@@ -32,11 +32,11 @@ const DownloadApp = () => {
                         justify="center"
                         alignItems="center"
                     >
-                        <Grid item xs={6}>
+                        <Grid item xs={6} style={{minWidth: "300px"}}>
                             <Slide left>
                                 <div
                                     style={{
-                                        width: "60%",
+                                        width: "300px",
                                         color: "white",
                                         margin: "auto",
                                     }}
@@ -52,11 +52,11 @@ const DownloadApp = () => {
                                 </div>
                             </Slide>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={6} style={{minWidth: "300px"}}>
                             <Slide right>
                                 <div
                                     style={{
-                                        width: "60%",
+                                        width: "300px",
                                         color: "white",
                                         margin: "auto",
                                     }}
