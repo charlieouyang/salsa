@@ -18,11 +18,17 @@ class UserAccountTest(SalsaTestCase):
         self.assertEqual([user_account], db.session.query(UserAccount).all())
         self.assertEqual(user_account.user_name, 'user_name')
 
-    def test_duplicate_error(self):
+    def test_duplicate_username_error(self):
         UserAccountFactory(user_name='user_name')
 
         with self.assertRaises(IntegrityError):
             UserAccountFactory(user_name='user_name')
+
+    def test_duplicate_email_error(self):
+        UserAccountFactory(email='email_0')
+
+        with self.assertRaises(IntegrityError):
+            UserAccountFactory(email='email_0')
 
     def test_find_by_id_success(self):
         user_account = UserAccountFactory()

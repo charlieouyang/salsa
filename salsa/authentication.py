@@ -81,24 +81,16 @@ def reset_password():
     if user_email is None:
         raise BadRequest(description=INCORRECT_RESET_PARAMS_MSG)
 
-    print('user_email')
-    print(user_email)
-
     user_account = db.session.query(UserAccount).filter(
         UserAccount.email == user_email).first()
     if user_account is None:
         raise BadRequest(description=INCORRECT_RESET_PARAMS_MSG)
 
-    print('user_account')
-    print(user_account)
     # Generate password hash
     temp_password = str(random.randint(10000,99999))
     update_user = {'password_hashed': get_hashed_password(temp_password)}
     user_account.update(**update_user)
     user_account.save()
-
-    print('temp_password')
-    print(temp_password)
 
     email.send('reset_password', user_email, temp_password)
 
