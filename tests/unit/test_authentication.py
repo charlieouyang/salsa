@@ -7,6 +7,7 @@ from werkzeug.exceptions import Forbidden, BadRequest, Unauthorized
 from jose import JWTError, jwt
 
 from salsa.authentication import (login,
+                                  reset_password,
                                   verify_token,
                                   _current_timestamp,
                                   JWT_ISSUER,
@@ -114,3 +115,25 @@ class TestAuthentication(SalsaTestCase):
         token_value = '.'.join(parts)
         with self.assertRaises(Unauthorized):
             res = verify_token(token_value)
+
+    def test_reset_password_success(self):
+        user = UserAccountFactory(email='email_0')
+
+        reset_payload = {
+            'email': 'email_0'
+        }
+        with mock.patch('flask.request.get_json', return_value=reset_payload):
+            with mock.patch('salsa.email.send'):
+                res = reset_password()
+                self.assertEqual(res.get('status_code'), 200)
+
+    def test_reset_password_fail(self):
+        user = UserAccountFactory(email='email_0')
+
+        reset_payload = {
+            'email': 'another_email'
+        }
+        with mock.patch('flask.request.get_json', return_value=reset_payload):
+            with mock.patch('salsa.email.send'):
+                with self.assertRaises(BadRequest):
+                    res = reset_password()

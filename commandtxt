@@ -20,4 +20,3 @@ PGPASSWORD={ADD PASSWORD} psql -d salsa -h 0.0.0.0 -U salsa_api -c 'ALTER SCHEMA
 PGPASSWORD={ADD PASSWORD} psql -d salsa -f salsa/db/salsa.sql -h 0.0.0.0 -U salsa_api
 
 kubectl create secret generic apiauthsalt --from-literal=AUTH_SALT=<password_string>
-

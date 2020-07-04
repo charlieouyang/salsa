@@ -1,6 +1,7 @@
 # Authentication
 import time
 import os
+import random
 
 import connexion
 import six
@@ -10,6 +11,7 @@ from werkzeug.exceptions import Unauthorized, NotFound, BadRequest
 from jose import JWTError, jwt
 from flask import Flask, jsonify, request
 
+from salsa import email
 from salsa.models import UserAccount, UserRole
 from salsa.db import db
 
@@ -24,6 +26,7 @@ JWT_ALGORITHM = 'HS256'
 
 INCORRECT_LOGIN_INFO_MSG = 'Username or password incorrect'
 USER_ROLE_ERROR_INFO_MSG = 'User doesn\'t have a role assigned'
+INCORRECT_RESET_PARAMS_MSG = 'Invalid email'
 
 
 def _current_timestamp() -> int:
@@ -64,6 +67,42 @@ def login():
 
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
     return {'status_code': 200, 'token': token, 'user_account_id': str(user.id)}
+
+def reset_password():
+    """
+    1. Validate the email address
+    2. Generate simple password
+    3. Replace UserAccount.password with new change
+    4. Send e-mail to user's address with new password
+    """
+    json_data = request.get_json()
+    user_email = json_data.get('email') or None
+
+    if user_email is None:
+        raise BadRequest(description=INCORRECT_RESET_PARAMS_MSG)
+
+    print('user_email')
+    print(user_email)
+
+    user_account = db.session.query(UserAccount).filter(
+        UserAccount.email == user_email).first()
+    if user_account is None:
+        raise BadRequest(description=INCORRECT_RESET_PARAMS_MSG)
+
+    print('user_account')
+    print(user_account)
+    # Generate password hash
+    temp_password = str(random.randint(10000,99999))
+    update_user = {'password_hashed': get_hashed_password(temp_password)}
+    user_account.update(**update_user)
+    user_account.save()
+
+    print('temp_password')
+    print(temp_password)
+
+    email.send('reset_password', user_email, temp_password)
+
+    return {'status_code': 200, 'message': 'Password reset success!'}
 
 def verify_token(token):
     try:

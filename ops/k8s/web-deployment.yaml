@@ -39,6 +39,11 @@ spec:
                 secretKeyRef:
                   name: apiauthsalt
                   key: AUTH_SALT
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: apiauthsendgrid
+                  key: SENDGRID_KEY
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.16
           command: ["/cloud_sql_proxy",

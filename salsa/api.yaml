@@ -450,6 +450,34 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /reset_password:
+    post:
+      summary: Reset a user's password
+      operationId: salsa.authentication.reset_password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  description: 'Email of the user'
+                  type: string
+              required:
+                - email
+      responses:
+        "200":
+          description: secret response
+          content:
+            'text/plain':
+              schema:
+                type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /user_accounts_no_auth:
     post:
       description: 'Create a new user account no auth required. Only can create normal users'
