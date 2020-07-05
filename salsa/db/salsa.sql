@@ -34,20 +34,20 @@ INSERT INTO public.user_role (id, title, description) VALUES ('51484d2c-7a3d-4fe
 --
 -- password is abc
 --
-INSERT INTO public.user_account (id, name, email, password_hashed, extradata, created_at, updated_at, user_name, user_role_id) VALUES ('b3793c45-0b19-433d-a24d-9e9cd5952adf', 'Susanna Jiang', 'jiang.susanna@gmail.com', '$2b$12$JA6/fiuPQfJn3wzM0RJUeOvOOiT4p6fcmb7N1S0aFFWTKDRc6d8ii', '{}', NOW(), NOW(), 'susannajiang', '51484d2c-7a3d-4fe9-b10d-52d6e7408031');
+INSERT INTO public.user_account (id, name, email, password_hashed, extradata, created_at, updated_at, user_role_id) VALUES ('b3793c45-0b19-433d-a24d-9e9cd5952adf', 'Susanna Jiang', 'susannajiang@gmail.com', '$2b$12$JA6/fiuPQfJn3wzM0RJUeOvOOiT4p6fcmb7N1S0aFFWTKDRc6d8ii', '{}', NOW(), NOW(), '51484d2c-7a3d-4fe9-b10d-52d6e7408031');
 --
 -- password is abc
 --
-INSERT INTO public.user_account (id, name, email, password_hashed, extradata, created_at, updated_at, user_name, user_role_id) VALUES ('2ef9f33e-291a-4fb0-83db-d25031228986', 'Charlie Ou Yang', 'charlieouyang@gmail.com', '$2b$12$JA6/fiuPQfJn3wzM0RJUeOvOOiT4p6fcmb7N1S0aFFWTKDRc6d8ii', '{}', NOW(), NOW(), 'charlieouyang', '51484d2c-7a3d-4fe9-b10d-52d6e7408031');
+INSERT INTO public.user_account (id, name, email, password_hashed, extradata, created_at, updated_at, user_role_id) VALUES ('2ef9f33e-291a-4fb0-83db-d25031228986', 'Charlie Ou Yang', 'charlieouyang@gmail.com', '$2b$12$JA6/fiuPQfJn3wzM0RJUeOvOOiT4p6fcmb7N1S0aFFWTKDRc6d8ii', '{}', NOW(), NOW(), '51484d2c-7a3d-4fe9-b10d-52d6e7408031');
 --
 -- password is abc
 --
-INSERT INTO public.user_account (id, name, email, password_hashed, extradata, created_at, updated_at, user_name, user_role_id) VALUES ('d6e517e1-75d7-48ca-9970-7e739d018eaa', 'Kevin Ou Yang', 'kevinouyang@gmail.com', '$2b$12$JA6/fiuPQfJn3wzM0RJUeOvOOiT4p6fcmb7N1S0aFFWTKDRc6d8ii', '{}', NOW(), NOW(), 'kevinouyang', '51484d2c-7a3d-4fe9-b10d-52d6e7408031');
+INSERT INTO public.user_account (id, name, email, password_hashed, extradata, created_at, updated_at, user_role_id) VALUES ('d6e517e1-75d7-48ca-9970-7e739d018eaa', 'Kevin Ou Yang', 'kevinouyang@gmail.com', '$2b$12$JA6/fiuPQfJn3wzM0RJUeOvOOiT4p6fcmb7N1S0aFFWTKDRc6d8ii', '{}', NOW(), NOW(), '51484d2c-7a3d-4fe9-b10d-52d6e7408031');
 
 --
 -- password is 123
 --
-INSERT INTO public.user_account (id, name, email, password_hashed, extradata, created_at, updated_at, user_name, user_role_id) VALUES ('552b5eec-0fa2-4cd8-a78b-1b792b9bea92', 'God', 'god@email.com', '$2b$12$qB.WXaCRB1LG1MquzuAyw.ckwRYQPyKkzFDQhznTkealv4Zf//CCK', '{}', '2020-03-15 22:04:04.745385', '2020-03-15 22:04:04.745385', 'god', 'ad6382b5-50a7-40fa-91e8-c98f67005e40');
+INSERT INTO public.user_account (id, name, email, password_hashed, extradata, created_at, updated_at, user_role_id) VALUES ('552b5eec-0fa2-4cd8-a78b-1b792b9bea92', 'God', 'god@email.com', '$2b$12$qB.WXaCRB1LG1MquzuAyw.ckwRYQPyKkzFDQhznTkealv4Zf//CCK', '{}', '2020-03-15 22:04:04.745385', '2020-03-15 22:04:04.745385', 'ad6382b5-50a7-40fa-91e8-c98f67005e40');
 
 --
 -- categories

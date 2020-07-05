@@ -24,7 +24,7 @@ JWT_SECRET = os.getenv('SALSA_AUTH_SALT', 'did_not_work')
 JWT_LIFETIME_SECONDS = 60*60*24 #24 hours
 JWT_ALGORITHM = 'HS256'
 
-INCORRECT_LOGIN_INFO_MSG = 'Username or password incorrect'
+INCORRECT_LOGIN_INFO_MSG = 'Email or password incorrect'
 USER_ROLE_ERROR_INFO_MSG = 'User doesn\'t have a role assigned'
 INCORRECT_RESET_PARAMS_MSG = 'Invalid email'
 
@@ -34,14 +34,14 @@ def _current_timestamp() -> int:
 
 def login():
     json_data = request.get_json()
-    username = json_data.get('username') or None
+    email = json_data.get('email') or None
     password = json_data.get('password') or None
 
-    if username is None or password is None:
+    if email is None or password is None:
         raise BadRequest(description=INCORRECT_LOGIN_INFO_MSG)
 
     res = db.session.query(UserAccount, UserRole).join(UserRole).filter(
-                UserAccount.user_name==username).first()
+                UserAccount.email==email).first()
 
     if res is None:
         raise BadRequest(description=INCORRECT_LOGIN_INFO_MSG)
@@ -100,11 +100,11 @@ def verify_token(token):
     try:
         decoded = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
 
-        user_name = T.get_in(['usr', 'user_name'], decoded)
-        if not user_name:
-            raise JWTError('Invalid JWT header', 'user_name missing')
+        email = T.get_in(['usr', 'email'], decoded)
+        if not email:
+            raise JWTError('Invalid JWT header', 'email missing')
 
-        instance = db.session.query(UserAccount).filter_by(user_name=user_name).first()
+        instance = db.session.query(UserAccount).filter_by(email=email).first()
         if not instance:
             raise JWTError('Invalid JWT header', 'user missing')
 

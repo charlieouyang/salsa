@@ -28,19 +28,19 @@ timestamp = _current_timestamp()
 class TestAuthentication(SalsaTestCase):
 
     @parameterized.expand([
-        ('user_0', 'pass_0', True),
-        ('USER_0', 'pass_0', False),
-        ('user_0', 'PASS_0', False),
-        ('user_0', 'incorrect', False),
+        ('user@email.com', 'pass_0', True),
+        ('USER@EMAIL.COM', 'pass_0', False),
+        ('user@email.com', 'PASS_0', False),
+        ('user@email.com', 'incorrect', False),
         ('', 'pass_0', False),
-        ('user_0', '', False),
+        ('user@email.com', '', False),
         ('', '', False),])
-    def test_login(self, user_name, password, is_successful):
-        user = UserAccountFactory(user_name='user_0',
+    def test_login(self, email, password, is_successful):
+        user = UserAccountFactory(email='user@email.com',
                                   password_hashed=get_hashed_password('pass_0'))
 
         login_payload = {
-            'username': user_name,
+            'email': email,
             'password': password,
         }
         with mock.patch('flask.request.get_json', return_value=login_payload):
@@ -55,11 +55,11 @@ class TestAuthentication(SalsaTestCase):
 
 
     @parameterized.expand([
-        (JWT_ISSUER, int(timestamp), int(timestamp + JWT_LIFETIME_SECONDS), { 'user_name': 'test_user' }, {}),
-        (None, int(timestamp), int(timestamp + JWT_LIFETIME_SECONDS), { 'user_name': 'test_user' }, {}),
-        (JWT_ISSUER, int(timestamp), int(timestamp + JWT_LIFETIME_SECONDS), { 'user_name': 'test_user' }, None),])
+        (JWT_ISSUER, int(timestamp), int(timestamp + JWT_LIFETIME_SECONDS), { 'email': 'test_user@email.com' }, {}),
+        (None, int(timestamp), int(timestamp + JWT_LIFETIME_SECONDS), { 'email': 'test_user@email.com' }, {}),
+        (JWT_ISSUER, int(timestamp), int(timestamp + JWT_LIFETIME_SECONDS), { 'email': 'test_user@email.com' }, None),])
     def test_verify_token_success(self, iss, iat, exp, usr, prm):
-        user = UserAccountFactory(user_name='test_user',
+        user = UserAccountFactory(email='test_user@email.com',
                                   password_hashed=get_hashed_password('test_user_pass'))
         test_payload = {
             'iss': iss,
@@ -74,8 +74,8 @@ class TestAuthentication(SalsaTestCase):
 
 
     @parameterized.expand([
-        (JWT_ISSUER, int(timestamp), int(timestamp + JWT_LIFETIME_SECONDS), { 'user_name': 'test_user' }, {}),
-        (JWT_ISSUER, int(timestamp), int(timestamp - 1), { 'user_name': 'test_user' },  {}),
+        (JWT_ISSUER, int(timestamp), int(timestamp + JWT_LIFETIME_SECONDS), { 'email': 'test_user@email.com' }, {}),
+        (JWT_ISSUER, int(timestamp), int(timestamp - 1), { 'email': 'test_user@email.com' },  {}),
         (JWT_ISSUER, int(timestamp), int(timestamp + JWT_LIFETIME_SECONDS), {},  {}),
         (JWT_ISSUER, int(timestamp), int(timestamp + JWT_LIFETIME_SECONDS), None,  {}),])
     def test_verify_token_fail(self, iss, iat, exp, usr, prm):
@@ -100,13 +100,13 @@ class TestAuthentication(SalsaTestCase):
             res = verify_token(token_value)
 
         # Modify the token value
-        user = UserAccountFactory(user_name='test_user',
+        user = UserAccountFactory(email='test_user@email.com',
                                   password_hashed=get_hashed_password('test_user_pass'))
         test_payload = {
             'iss': JWT_ISSUER,
             'iat': int(timestamp),
             'exp': int(timestamp + JWT_LIFETIME_SECONDS),
-            'usr': { 'user_name': 'test_user' },
+            'usr': { 'email': 'test_user@email.com' },
             'prm': {},
         }
         token_value = jwt.encode(test_payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
@@ -117,10 +117,10 @@ class TestAuthentication(SalsaTestCase):
             res = verify_token(token_value)
 
     def test_reset_password_success(self):
-        user = UserAccountFactory(email='email_0')
+        user = UserAccountFactory(email='email_0@email.com')
 
         reset_payload = {
-            'email': 'email_0'
+            'email': 'email_0@email.com'
         }
         with mock.patch('flask.request.get_json', return_value=reset_payload):
             with mock.patch('salsa.email.send'):
@@ -128,10 +128,10 @@ class TestAuthentication(SalsaTestCase):
                 self.assertEqual(res.get('status_code'), 200)
 
     def test_reset_password_fail(self):
-        user = UserAccountFactory(email='email_0')
+        user = UserAccountFactory(email='email_0@email.com')
 
         reset_payload = {
-            'email': 'another_email'
+            'email': 'wrong_email@email.com'
         }
         with mock.patch('flask.request.get_json', return_value=reset_payload):
             with mock.patch('salsa.email.send'):

@@ -1,4 +1,5 @@
 import unittest
+from werkzeug.exceptions import BadRequest
 from unittest import mock
 from parameterized import parameterized
 
@@ -29,14 +30,13 @@ class TestUserAccountsController(ApiUnitTestCase, SalsaTestCase):
         self.assertEqual(res.json[0]['id'], str(matched.id))
 
     def test_list_with_filter(self):
-        self._list_with_filter(user_name='test_user_name_1')
+        self._list_with_filter(email='test_user_email_1')
 
     def test_post(self):
         user_role = UserRoleFactory()
         body = {
-            'user_name': 'test_user_name',
             'name': 'test_name',
-            'email': 'test_email',
+            'email': 'test_email@email.com',
             'password': 'test_pass',
             'extradata': '{"data": "me"}',
             'user_role_id': str(user_role.id)
@@ -46,29 +46,48 @@ class TestUserAccountsController(ApiUnitTestCase, SalsaTestCase):
 
         self._post_valid(body, expected=expected, use_expected_for_body=True)
 
-    def test_post_invalid(self):
+    def test_post_invalid_duplicate(self):
         user_role = UserRoleFactory()
-        UserAccountFactory(user_name='name1')
+        UserAccountFactory(email='test_email@email.com')
 
         body = {
-            'user_name': 'name1',
             'name': 'test_name',
-            'email': 'test_email',
+            'email': 'test_email@email.com',
             'extradata': '{"data": "me"}',
             'password': 'test_pass',
             'user_role_id': str(user_role.id)
         }
         self._post_invalid(body, err='{} already exists')
 
+    def test_post_invalid_email(self):
+        user_role = UserRoleFactory()
+        body = {
+            'name': 'test_name',
+            'email': 'invalid_email',
+            'extradata': '{"data": "me"}',
+            'password': 'test_pass',
+            'user_role_id': str(user_role.id)
+        }
+        with self.assertRaises(BadRequest):
+            self._post_invalid(body, err='Email is invalid')
+
     def test_put(self):
         body = {
             'name': 'test_name',
-            'email': 'test_email'
+            'email': 'test_email@email.com'
         }
         self._put_valid(body)
 
     def test_put_not_found(self):
         self._put_not_found({'name': 'name1'})
+
+    def test_put_invalid_email(self):
+        body = {
+            'name': 'test_name',
+            'email': 'invalid_email'
+        }
+        with self.assertRaises(BadRequest):
+            self._put_valid(body)
 
 
 class TestUserAccountsPermissions(PermissionsTestCase, SalsaTestCase):
@@ -139,9 +158,8 @@ class TestUserAccountsPermissions(PermissionsTestCase, SalsaTestCase):
     def test_create_no_auth(self, user_type, is_successful):
         self._setup_user_himself_and_roles()
         body = {
-            'user_name': 'user_name_test',
             'name': 'name_test',
-            'email': 'email_test',
+            'email': 'test_email@email.com',
             'extradata': '{"data": "me"}',
             'password': 'pass_test'
         }
@@ -155,7 +173,7 @@ class TestUserAccountsPermissions(PermissionsTestCase, SalsaTestCase):
         if is_successful:
             self.assertIsNotNone(res.data)
             self.assertEqual(res.status_code, 201)
-            self.assertEqual(res.json['user_name'], body['user_name'])
+            self.assertEqual(res.json['email'], body['email'])
         else:
             self.assertIsNotNone(res.data)
             self.assertEqual(res.status_code, 403)

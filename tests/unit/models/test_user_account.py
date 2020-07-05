@@ -13,16 +13,10 @@ from tests.factories import UserAccountFactory
 
 class UserAccountTest(SalsaTestCase):
     def test_valid_user_account(self):
-        user_account = UserAccountFactory(user_name='user_name')
+        user_account = UserAccountFactory(email='user@email.com')
 
         self.assertEqual([user_account], db.session.query(UserAccount).all())
-        self.assertEqual(user_account.user_name, 'user_name')
-
-    def test_duplicate_username_error(self):
-        UserAccountFactory(user_name='user_name')
-
-        with self.assertRaises(IntegrityError):
-            UserAccountFactory(user_name='user_name')
+        self.assertEqual(user_account.email, 'user@email.com')
 
     def test_duplicate_email_error(self):
         UserAccountFactory(email='email_0')

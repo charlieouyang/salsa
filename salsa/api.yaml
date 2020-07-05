@@ -94,8 +94,6 @@ components:
           type: string
         name:
           type: string
-        user_name:
-          type: string
         email:
           type: string
         extradata:
@@ -121,7 +119,6 @@ components:
             - email
             - extradata
             - password
-            - user_name
             - user_role_id
     PutUserAccount:
       allOf:
@@ -420,7 +417,7 @@ paths:
 
   /login:
     post:
-      summary: Get a token with username and password
+      summary: Get a token with email and password
       operationId: salsa.authentication.login
       requestBody:
         required: true
@@ -429,14 +426,14 @@ paths:
             schema:
               type: object
               properties:
-                username:
-                  description: 'Username of the user'
+                email:
+                  description: 'Email of the user'
                   type: string
                 password:
                   description: 'Password of the user'
                   type: string
               required:
-                - username
+                - email
                 - password
       responses:
         "200":

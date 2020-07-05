@@ -12,7 +12,6 @@ class UserAccount(BaseModel):
     # user is a reserved keyword in postgres
     __tablename__ = 'user_account'
     id = db.Column(GUID, primary_key=True, default=GUID.default_value)
-    user_name = db.Column(db.String(255), unique=True, nullable=False)
     name = db.Column(db.String(255), unique=False, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     extradata = db.Column(db.String(255), unique=False, nullable=True)

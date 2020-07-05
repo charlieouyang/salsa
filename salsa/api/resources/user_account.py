@@ -1,3 +1,4 @@
+import re
 import json
 from werkzeug.exceptions import BadRequest, InternalServerError
 from sqlalchemy import exc
@@ -14,6 +15,7 @@ from salsa.utils.decorators import decorate_all_methods
 
 INVALID_PASSWORD_MSG = 'Invalid password'
 INVALID_EXTRADATA_MSG = 'Invalid extradata. Extradata must be a json string'
+INVALID_EMAIL_MSG = 'Email is invalid'
 
 
 @decorate_all_methods(sqlalchemy_exception_handler)
@@ -65,11 +67,17 @@ class UserAccountResource(BaseResource):
         password_hashed = get_hashed_password(password)
         user_account['password_hashed'] = password_hashed
 
+        self._validate_email(user_account.get('email'))
+
         extradata = user_account.get("extradata")
         if extradata:
             self._check_extradata(extradata)
 
         return user_account
+
+    def _validate_email(self, email):
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            raise BadRequest(description=INVALID_EMAIL_MSG)
 
     @serialize_return(status=200)
     def update(self, user_account_id, **kwargs):
@@ -83,6 +91,9 @@ class UserAccountResource(BaseResource):
                 user_account['password_hashed'] = password_hashed
             else:
                 raise BadRequest(description='Can\'t set an empty password')
+
+        if 'email' in user_account:
+            self._validate_email(user_account.get('email'))
 
         extradata = user_account.get("extradata")
         if extradata:
