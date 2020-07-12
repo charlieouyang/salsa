@@ -201,7 +201,6 @@ class TestReviewsPermissions(PermissionsTestCase, SalsaTestCase):
                                  product=product),
                    ReviewFactory(purchase=purchases[1],
                                  product=product),]
-
         other_reviews = [ReviewFactory() for _ in range(5)]
 
         self._setup_user_himself_and_roles()
