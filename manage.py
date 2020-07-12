@@ -49,6 +49,8 @@ def create_db():
 
 @manager.command
 def drop_db():
+    print('DROP_DB')
+    print(db.engine.url)
     """Drops the db"""
     if database_exists(db.engine.url):
         drop_database(db.engine.url)
