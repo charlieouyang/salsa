@@ -36,6 +36,6 @@ services:
     environment:
       POSTGRES_USER: salsa
       POSTGRES_PASSWORD: salsa
-      POSTGRES_DB: salsa-${ENVIRONMENT}
+      POSTGRES_DB: salsa-changed-${ENVIRONMENT}
     expose:
       - "5432"
