@@ -1275,6 +1275,13 @@ paths:
 
   /reviews:
     get:
+      parameters:
+        - name: product_id
+          in: query
+          description: 'Query by product id'
+          schema:
+            format: uuid4
+            type: string
       description: Retrieve all reviews
       operationId: salsa.api.reviews.retrieve_list
       responses:

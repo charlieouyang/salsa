@@ -192,6 +192,27 @@ class TestReviewsPermissions(PermissionsTestCase, SalsaTestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json, [])
 
+    def test_list_with_product_id(self):
+        product = ProductFactory()
+        listing = ListingFactory(product=product)
+        purchases = [PurchaseFactory(listing=listing),
+                     PurchaseFactory(listing=listing)]
+        reviews = [ReviewFactory(purchase=purchases[0],
+                                 product=product),
+                   ReviewFactory(purchase=purchases[1],
+                                 product=product),]
+
+        other_reviews = [ReviewFactory() for _ in range(5)]
+
+        self._setup_user_himself_and_roles()
+
+        res = self.api.retrieve_list(token_info=self.user_himself,
+                                     product_id=str(product.id))
+
+        self.assertIsNotNone(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json), 2)
+
     def test_list_empty(self):
         pass
 
