@@ -29,6 +29,8 @@ services:
       - PGPASSWORD=salsa
       - PGHOST=postgres
       - SALSA_AUTH_SALT=salsa_salt_dev
+      - SENDGRID_API_KEY=abcde
+      - STORAGE_BUCKET_CREDENTIAL_PATH=credentials/bucket-service-account.json
     expose:
       - "5000"
     links:

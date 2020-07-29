@@ -57,6 +57,7 @@ def upload(**kwargs):
     # Try to connect to the bucket
     try:
         print('2')
+        print(os.environ.get('STORAGE_BUCKET_CREDENTIAL_PATH'))
         storage_client = storage.Client.from_service_account_json(
             os.environ.get('STORAGE_BUCKET_CREDENTIAL_PATH'))
 
