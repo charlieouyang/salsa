@@ -19,6 +19,7 @@ marshmallow~=3.3.0
 marshmallow-sqlalchemy~=0.21.0
 toolz~=0.10.0
 sendgrid~=6.4.1
+google-cloud-storage~=1.30.0
 
 parameterized~=0.7.1
 

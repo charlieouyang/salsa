@@ -46,6 +46,7 @@ wheels/
 .installed.cfg
 *.egg
 
+*service-account.json
 # Installer logs
 pip-log.txt
 
