@@ -58,7 +58,7 @@ def upload(**kwargs):
     try:
         print('2')
         storage_client = storage.Client.from_service_account_json(
-            'credentials/salsa-bucket-service-account.json')
+            'credentials/service_account.json')
 
         print('storage_client')
         print(storage_client)
