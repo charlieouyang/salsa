@@ -29,6 +29,8 @@ spec:
               value: salsa
             - name: SALSA_DB_USER
               value: salsa_api
+            - name: STORAGE_BUCKET_CREDENTIAL_PATH
+              value: /credentials/service_account.json
             - name: SALSA_DB_PASSWORD
               valueFrom:
                 secretKeyRef:

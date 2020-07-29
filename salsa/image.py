@@ -58,7 +58,7 @@ def upload(**kwargs):
     try:
         print('2')
         storage_client = storage.Client.from_service_account_json(
-            'credentials/service_account.json')
+            os.environ.get('STORAGE_BUCKET_CREDENTIAL_PATH'))
 
         print('storage_client')
         print(storage_client)
