@@ -104,6 +104,8 @@ def upload(**kwargs):
             if file_length > MAX_FILE_SIZE:
                 raise BadRequest(description=IMAGE_TOO_LARGE_ERROR_MSG)
             file.close()
+        except BadRequest as error:
+            raise error
         except Exception as error:
             raise InternalServerError(
                 description=f'{FILE_SIZE_CHECK_ERROR_MSG}: {error}')
