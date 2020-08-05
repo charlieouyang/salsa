@@ -51,7 +51,7 @@ class TestImage(SalsaTestCase):
             file.close.assert_called()
 
             # Upload the file to bucket and get URL
-            print('NO TESTING FOR BUCKET UPLOAD CODE...')
+            # NO TESTING FOR BUCKET UPLOAD CODE..
 
             # Remove file from disk
             remove_calls.append(mock.call(f'salsa/image_store/{file_path}'))

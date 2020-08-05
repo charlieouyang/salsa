@@ -54,3 +54,4 @@ pip-log.txt
 .python-version
 
 pyenv/*
+salsa/image_store/*
