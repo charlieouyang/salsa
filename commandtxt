@@ -26,3 +26,5 @@ Create secret service account file
 charlieouyang@cloudshell:~$ kubectl create secret generic storage-bucket-credentials --from-file=service_account.json=salsa-bucket-service-account.json
 
 secret/storage-bucket-credentials created
+
+open ios/Runner.xcworkspace
