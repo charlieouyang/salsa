@@ -65,8 +65,6 @@ def upload(**kwargs):
             file_path = f'{user_id}_{_current_timestamp()}_{idx}.png'
             local_file_path = LOCAL_IMAGE_STORE_PATH + file_path
             file.save(local_file_path, buffer_size=65536)
-
-            raise ValueError()
         except Exception as error:
             raise InternalServerError(
                 description=f'{FILE_SAVE_ERROR_MSG}: {error}')
