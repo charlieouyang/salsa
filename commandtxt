@@ -28,3 +28,10 @@ charlieouyang@cloudshell:~$ kubectl create secret generic storage-bucket-credent
 secret/storage-bucket-credentials created
 
 open ios/Runner.xcworkspace
+
+
+digitalocean
+ssh root@165.227.252.232
+
+psql -U postgres
+your-pass
