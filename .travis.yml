@@ -40,9 +40,9 @@ before_install:
 script:
   - docker-compose run -e ENVIRONMENT=testing web make test
 
-# Run our deploy script
-deploy:
-  provider: script
-  script: bash ./deploy.sh
-  on:
-    branch: master
+# # Run our deploy script
+# deploy:
+#   provider: script
+#   script: bash ./deploy.sh
+#   on:
+#     branch: master
