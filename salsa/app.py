@@ -8,6 +8,7 @@ from connexion.resolver import RestyResolver
 from salsa.config.config import config_class
 from salsa.db import db
 
+
 is_gunicorn = 'gunicorn' in os.getenv('SERVER_SOFTWARE', '')
 
 
