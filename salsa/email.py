@@ -5,26 +5,15 @@ import json
 import sendgrid
 from sendgrid.helpers.mail import (Email, Mail, Content, To)
 
-SENDGRID_FROM_EMAIL = 'helistrongtogether@gmail.com'
-MESSAGE_CONTENT = {
-    'reset_password': {
-        'subject': 'Password Reset',
-        'body': 'Your password has been reset. Your new password is \n\n'
-    }
-}
-
 
 def send(action, recipient, data):
     try:
-        sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
-        from_email = Email(SENDGRID_FROM_EMAIL)
-        to_email = To(recipient)
+        sg = sendgrid.SendGridAPIClient(api_key='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')
+        from_email = Email('helistrongtogether@gmail.com')
+        to_email = To('charlieouyang@hotmail.com')
 
-        message_content = MESSAGE_CONTENT.get(action)
-
-        subject = message_content.get('subject')
-        body = message_content.get('body')
-        body += data
+        subject = 'Healthcheck Failed'
+        body = 'Digitalocean helistrong healthcheck failed!'
         content = Content('text/plain', body)
 
         mail = Mail(from_email, to_email, subject, content)
