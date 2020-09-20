@@ -1,0 +1,45 @@
+---
+version: '3.2'
+services:
+  nginx:
+    depends_on:
+      - web
+      - ui
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - "3050:80"
+    volumes:
+      - ./nginx/custom_proxy_settings.conf:/etc/nginx/conf.d/custom_proxy_settings.conf
+  ui:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./salsa_ui
+    volumes:
+      - /app/node_modules
+      - ./salsa_ui:/app
+  web:
+    build: .
+    hostname: salsa
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+      - SALSA_DB_HOST=postgres
+      - PGPASSWORD=salsa
+      - PGHOST=postgres
+      - SALSA_AUTH_SALT=salsa_salt_dev
+      - SENDGRID_API_KEY=abcde
+      - STORAGE_BUCKET_CREDENTIAL_PATH=credentials/bucket-service-account.json
+    expose:
+      - "5000"
+    links:
+      - postgres
+  postgres:
+    image: postgres:9.6
+    environment:
+      POSTGRES_USER: salsa
+      POSTGRES_PASSWORD: salsa
+      POSTGRES_DB: salsa-${ENVIRONMENT}
+    expose:
+      - "5432"

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: web
+  template:
+    metadata:
+      labels:
+        component: web
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: web
+          image: charlieouyang/salsa
+          command: ["make", "start-gunicorn"]
+          ports:
+            - containerPort: 5000
+          env:
+            - name: ENVIRONMENT
+              value: production
+            - name: SALSA_DB_HOST
+              value: localhost
+            - name: SALSA_DB_NAME
+              value: salsa
+            - name: SALSA_DB_USER
+              value: salsa_api
+            - name: STORAGE_BUCKET_CREDENTIAL_PATH
+              value: /credentials/service_account.json
+            - name: SALSA_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: PGPASSWORD
+            - name: SALSA_AUTH_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: apiauthsalt
+                  key: AUTH_SALT
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: apiauthsendgrid
+                  key: SENDGRID_KEY
+          volumeMounts:
+            - name: storage-creds-volume
+              mountPath: /credentials
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.16
+          command: ["/cloud_sql_proxy",
+            "-instances=chinese-goods-277420:us-central1:salsa-production=tcp:5432",
+            "-credential_file=/credentials/service_account.json"]
+          volumeMounts:
+            - name: service-account-token
+              mountPath: /credentials
+      volumes:
+        - name: service-account-token
+          secret:
+            secretName: service-account-token
+        - name: storage-creds-volume
+          secret:
+            secretName: storage-bucket-credentials

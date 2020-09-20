@@ -1,0 +1,206 @@
+[
+  {
+    "_schema": "https://schemas.c.fpint.net/2017/resource/alerting/realtime/event.json",
+    "fpid": "erze_QtgScyVIRr4uKxWFg",
+    "event": {
+      "created_on": 1234567890,
+      "type": "event",
+      "name": "AboutfaceUpdate",
+      "correlation_id": "e6e87034-4060-481c-98c1-26b3426a7d5a"
+    },
+    "changes": [
+      {
+        "type": "insert",
+        "model": "KeywordClass",
+        "object": {
+          "description": "key with class",
+          "name": "KC",
+          "id": "12345678-0b60-49cc-9521-1af8b8ac5616"
+        }
+      }
+    ]
+  },
+  {
+    "_schema": "https://schemas.c.fpint.net/2017/resource/alerting/realtime/event.json",
+    "fpid": "erze_QtgScyVIRr4uKxWFg",
+    "event": {
+      "created_on": 1234567890,
+      "type": "event",
+      "name": "AboutfaceUpdate",
+      "correlation_id": "e6e87034-4060-481c-98c1-26b3426a7d5a"
+    },
+    "changes": [
+      {
+        "type": "insert",
+        "model": "Owner",
+        "object": {
+          "active": true,
+          "email": "a@example.org",
+          "support_email": "s@example.org",
+          "fpid": "IjRWeAtgScyVIRr4uKxWFg",
+          "salesforce_id": "sid",
+          "allowed_domains": ["example.org"],
+          "name": "OWN",
+          "id": "22345678-0b60-49cc-9521-1af8b8ac5616",
+          "is_curator": false
+        }
+      }
+    ]
+  },
+  {
+    "_schema": "https://schemas.c.fpint.net/2017/resource/alerting/realtime/event.json",
+    "fpid": "erze_QtgScyVIRr4uKxWFg",
+    "event": {
+      "created_on": 1234567890,
+      "type": "event",
+      "name": "AboutfaceUpdate",
+      "correlation_id": "e6e87034-4060-481c-98c1-26b3426a7d5a"
+    },
+    "changes": [
+      {
+        "type": "insert",
+        "model": "KeywordSet",
+        "object": {
+          "id": "32345678-0b60-49cc-9521-1af8b8ac5616",
+          "entity_id": "22345678-0b60-49cc-9521-1af8b8ac5616",
+          "entity_table_name": "owner",
+          "created_at": "2019-01-01 00:00:00",
+          "updated_at": "2019-01-01 00:00:00",
+          "support_email": "support@helistrong.com"
+        }
+      }
+    ]
+  },
+  {
+    "_schema": "https://schemas.c.fpint.net/2017/resource/alerting/realtime/event.json",
+    "fpid": "erze_QtgScyVIRr4uKxWFg",
+    "event": {
+      "created_on": 1234567890,
+      "type": "event",
+      "name": "AboutfaceUpdate",
+      "correlation_id": "e6e87034-4060-481c-98c1-26b3426a7d5a"
+    },
+    "changes": [
+      {
+        "type": "insert",
+        "model": "Keyword",
+        "object": {
+          "value": "value0",
+          "active": true,
+          "is_curated": true,
+          "description": "",
+          "name": "keyword0",
+          "id": "13345678-0b60-49cc-9521-1af8b8ac5616",
+          "created_timestamp": "2019-01-01 00:00:00",
+          "updated_at": "2019-01-01 00:00:00",
+          "keyclass_id": "12345678-0b60-49cc-9521-1af8b8ac5616",
+          "keyword_set_id": "32345678-0b60-49cc-9521-1af8b8ac5616"
+        }
+      },
+      {
+        "type": "update",
+        "model": "KeywordClass",
+        "object": {
+          "keywords": true,
+          "id": "12345678-0b60-49cc-9521-1af8b8ac5616",
+          "query_template": null,
+          "name": "KC",
+          "description": "key with class"
+        }
+      },
+      {
+        "type": "update",
+        "model": "KeywordSet",
+        "object": {
+          "curator_id": null,
+          "entity_table_name": "owner",
+          "id": "32345678-0b60-49cc-9521-1af8b8ac5616",
+          "created_at": "2019-01-01 00:00:00",
+          "support_email": "support@helistrong.com",
+          "entity_id": "22345678-0b60-49cc-9521-1af8b8ac5616",
+          "updated_at": "2019-01-01 00:00:00"
+        }
+      }
+    ]
+  },
+  {
+    "_schema": "https://schemas.c.fpint.net/2017/resource/alerting/realtime/event.json",
+    "fpid": "erze_QtgScyVIRr4uKxWFg",
+    "event": {
+      "created_on": 1234567890,
+      "type": "event",
+      "name": "AboutfaceUpdate",
+      "correlation_id": "e6e87034-4060-481c-98c1-26b3426a7d5a"
+    },
+    "changes": [
+      {
+        "type": "insert",
+        "model": "Keyword",
+        "object": {
+          "value": "value1",
+          "active": true,
+          "is_curated": true,
+          "description": "",
+          "name": "keyword1",
+          "id": "23345678-0b60-49cc-9521-1af8b8ac5616",
+          "created_timestamp": "2019-01-01 00:00:00",
+          "updated_at": "2019-01-01 00:00:00",
+          "keyword_set_id": "32345678-0b60-49cc-9521-1af8b8ac5616",
+          "keyclass_id": "12345678-0b60-49cc-9521-1af8b8ac5616"
+        }
+      },
+      {
+        "type": "update",
+        "model": "KeywordClass",
+        "object": {
+          "keywords": true,
+          "id": "12345678-0b60-49cc-9521-1af8b8ac5616",
+          "query_template": null,
+          "name": "KC",
+          "description": "key with class"
+        }
+      },
+      {
+        "type": "update",
+        "model": "KeywordSet",
+        "object": {
+          "curator_id": null,
+          "entity_table_name": "owner",
+          "id": "32345678-0b60-49cc-9521-1af8b8ac5616",
+          "created_at": "2019-01-01 00:00:00",
+          "support_email": "support@helistrong.com",
+          "entity_id": "22345678-0b60-49cc-9521-1af8b8ac5616",
+          "updated_at": "2019-01-01 00:00:00"
+        }
+      }
+    ]
+  },
+  {
+    "_schema": "https://schemas.c.fpint.net/2017/resource/alerting/realtime/event.json",
+    "fpid": "erze_QtgScyVIRr4uKxWFg",
+    "event": {
+      "created_on": 1234567890,
+      "type": "event",
+      "name": "AboutfaceUpdate",
+      "correlation_id": "e6e87034-4060-481c-98c1-26b3426a7d5a"
+    },
+    "changes": [
+      {
+        "type": "update",
+        "model": "Keyword",
+        "object": {
+          "value": "new_value1",
+          "keyclass_id": "12345678-0b60-49cc-9521-1af8b8ac5616",
+          "is_curated": true,
+          "created_timestamp": "2019-01-01 00:00:00",
+          "updated_at": "2019-01-01 00:00:00",
+          "id": "13345678-0b60-49cc-9521-1af8b8ac5616",
+          "keyword_set_id": "32345678-0b60-49cc-9521-1af8b8ac5616",
+          "active": true,
+          "description": "",
+          "name": "keyword0"
+        }
+      }
+    ]
+  }
+]

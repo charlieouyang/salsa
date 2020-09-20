@@ -1,0 +1,59 @@
+cache/
+# python and osx stuff
+*.py[cod]
+*.DS_Store
+# logs
+logs/
+*.log
+
+# bash configs
+.bashrc
+# the virtualenv folder
+# dotenv
+.env
+
+# virtualenv
+.venv/
+venv/
+venv2.7
+ENV/
+
+.project
+.pydevproject
+.settings
+.idea
+
+# cookies
+core/cookies/*.txt
+
+# Distribution / packaging
+.Python
+env/
+build/
+coverage/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+/lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+*service-account.json
+# Installer logs
+pip-log.txt
+
+# pyenv
+.python-version
+
+pyenv/*
+salsa/image_store/*
+
+salsa/config/config.py
