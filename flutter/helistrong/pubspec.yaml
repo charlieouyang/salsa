@@ -31,6 +31,10 @@ dependencies:
   http: ^0.12.2
   shared_preferences: ^0.5.10
   smooth_star_rating: ^1.1.1
+  flappy_search_bar: ^1.7.2
+  flutter_rating_bar: ^3.0.1+1
+  loading: ^1.0.2
+  carousel_slider: ^2.2.1
 
 dev_dependencies:
   flutter_test:

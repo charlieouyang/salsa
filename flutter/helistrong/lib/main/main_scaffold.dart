@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'recent_activity.dart';
-import 'package:helistrong/listings/main_page.dart';
+import 'package:helistrong/listings/search.dart';
 import 'general_page.dart';
 
 class HomePage extends StatefulWidget {
