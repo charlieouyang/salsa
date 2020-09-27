@@ -28,7 +28,13 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         leading: Drawer(
           child: ListView(
-
+            children: [
+              DrawerHeader(
+                child: Text("header"),
+              ),
+              ListTile(),
+              ListTile(),
+            ],
           ),
         ),
       ),
