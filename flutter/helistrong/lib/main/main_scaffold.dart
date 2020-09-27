@@ -24,8 +24,16 @@ class _HomePageState extends State<HomePage> {
   }
   @override
   Widget build(BuildContext context) {
-    return CupertinoTabScaffold(
-      tabBar: CupertinoTabBar(
+    return Scaffold(
+      appBar: AppBar(
+        leading: Drawer(
+          child: ListView(
+
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
         onTap: onTabTapped,
         currentIndex: _currentIndex,
         items: <BottomNavigationBarItem> [
@@ -49,9 +57,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ]
       ),
-      tabBuilder: (BuildContext context, int index) {
-        return _children[_currentIndex];
-      },
+      body: _children[_currentIndex],
     );
   }
 }

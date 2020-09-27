@@ -68,8 +68,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      child: Column(
+    return Scaffold(
+      body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -80,36 +80,42 @@ class _LoginPageState extends State<LoginPage> {
               fontSize: 15.0,
             ),
           ),
-          SizedBox(
+          Container(
             height: 40.0,
             width: 250.0,
-            child: CupertinoTextField(
-              placeholder: "Email",
+            child: TextField(
               controller: loginEmailController,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black,
-                ),
-                borderRadius: BorderRadius.circular(8.0),
+              decoration: InputDecoration(
+                hintText: " Email",
+                border: InputBorder.none,
               ),
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(
+                  color: Colors.black,
+              ),
+              borderRadius: BorderRadius.circular(8.0),
             ),
           ),
           SizedBox(
             height: 10.0,
           ),
-          SizedBox(
+          Container(
             height: 40.0,
             width: 250.0,
-            child: CupertinoTextField(
-              placeholder: "Password",
+            child: TextField(
               obscureText: true,
               controller: passwordController,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black,
-                ),
-                borderRadius: BorderRadius.circular(8.0),
+              decoration: InputDecoration(
+                hintText: " Password",
+                border: InputBorder.none,
               ),
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+              ),
+              borderRadius: BorderRadius.circular(8.0),
             ),
           ),
           Padding(
@@ -124,9 +130,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           Center(
-            child: CupertinoButton(
-              padding: EdgeInsets.all(3.0),
-              onPressed: () async {
+            child: GestureDetector(
+              onTap: () async {
                 if (loginEmailController.text == "" || passwordController.text == "") {
                   setState(() {
                     notVerified = "Please check you have entered an email and a password";
@@ -169,8 +174,8 @@ class _LoginPageState extends State<LoginPage> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
-                        offset: Offset(0.0, 1.0),
-                        blurRadius: 0.0,
+                        offset: Offset(0.0, 2.0),
+                        blurRadius: 1.0,
                       ),
                     ]
                 ),
@@ -181,9 +186,8 @@ class _LoginPageState extends State<LoginPage> {
             height: 10.0,
           ),
           Center(
-            child: CupertinoButton(
-              padding: EdgeInsets.all(3.0),
-              onPressed: () {
+            child: GestureDetector(
+              onTap: () {
 
               },
               child: Container(

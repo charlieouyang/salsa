@@ -57,3 +57,5 @@ pyenv/*
 salsa/image_store/*
 
 salsa/config/config.py
+
+healthcheck.py
