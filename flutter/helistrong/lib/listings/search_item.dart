@@ -105,7 +105,7 @@ class ListingItem extends StatelessWidget {
                                       allowHalfRating: true,
                                       itemCount: 5,
                                       itemSize: 15,
-                                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                                      itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
                                       itemBuilder: (context, _) => Icon(
                                         Icons.star,
                                         color: Colors.amber,

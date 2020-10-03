@@ -10,7 +10,7 @@ import 'package:helistrong/models/product.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../models/listing.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:helistrong/authenticator.dart';
 import 'listing_detail.dart';
 
 
@@ -24,17 +24,21 @@ class _MainListingsPageState extends State<MainListingsPage> {
 
   Future<List<Listing>> _searchListings(String text) async {
 
+    print('currentUser.userToken');
+    print(currentUser.userToken);
+
     String url = "https://helistrong.com/api/v1/listings?embed=product&name=$text";
     final http.Response response = await http.get(
       url,
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb20uc2Fsc2EuY29ubmV4aW9uIiwiaWF0IjoxNjAxMjI1NDkwLCJleHAiOjE2MDEzMTE4OTAsInVzciI6eyJpZCI6IjJlZjlmMzNlLTI5MWEtNGZiMC04M2RiLWQyNTAzMTIyODk4NiIsIm5hbWUiOiJDaGFybGllIE91IFlhbmciLCJ1cGRhdGVkX2F0IjoiMjAyMC0wOS0wN1QwMjowMzo1OC4xNTUwNDUiLCJjcmVhdGVkX2F0IjoiMjAyMC0wOS0wNVQxODoyMToyOC40MjE2NjAiLCJlbWFpbCI6ImNoYXJsaWVvdXlhbmdAZ21haWwuY29tIiwiZXh0cmFkYXRhIjoie30iLCJ1c2VyX3JvbGVfaWQiOiI1MTQ4NGQyYy03YTNkLTRmZTktYjEwZC01MmQ2ZTc0MDgwMzEifSwicHJtIjp7InRpdGxlIjoiVXNlciIsImRlc2NyaXB0aW9uIjoiUmVndWxhciB1c2VyIiwiaWQiOiI1MTQ4NGQyYy03YTNkLTRmZTktYjEwZC01MmQ2ZTc0MDgwMzEifX0.IIlBA_-i2oqBnwwQ3WxJ7Sk5o6uuPckalc6TRQJDOn0'
+        'Authorization': 'Bearer ${currentUser.userToken}'
       },
     );
 
     var listingDataParsed = json.decode(response.body);
+
     List<Listing> listings = [];
     for (int i = 0; i < listingDataParsed.length; i++) {
       var listing_ = listingDataParsed[i];
@@ -44,24 +48,27 @@ class _MainListingsPageState extends State<MainListingsPage> {
           listing_['active'],
           listing_['name'],
           listing_['price'],
-          listing_['updated_at'],
+          DateTime.parse(listing_['updated_at']),
           listing_['description'],
-          listing_['created_at'],
+          DateTime.parse(listing_['created_at']),
           listing_['amount_available'],
           listing_['product_id'],
-          listing_['user_id'],
+          null,
           Product(product_['id'],
                   product_['active'],
                   product_['name'],
-                  product_['updated_at'],
+                  DateTime.parse(product_['updated_at']),
                   product_['description'],
-                  product_['created_at'],
+                  DateTime.parse(product_['created_at']),
                   product_['avg_numstars'],
                   product_['image_urls'].cast<String>(),
-                  product_['user_id'],
+                  null,
                   []))
       );
     }
+
+    print('listings');
+    print(listings);
     return listings;
   }
 

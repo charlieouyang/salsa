@@ -5,8 +5,8 @@ class Review {
   final double numStars;
   final String purchaseId;
   final String userId;
-  final String createdAt;
-  final String updatedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   Review(this.id, this.name, this.description, this.numStars, this.purchaseId, this.userId, this.createdAt, this.updatedAt);
 }

@@ -2,14 +2,19 @@ import 'dart:convert';
 
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:helistrong/models/listing.dart';
 import 'package:helistrong/models/product.dart';
 import 'package:helistrong/models/review.dart';
+import 'package:helistrong/models/user.dart';
+import 'package:helistrong/purchase/buy_dialog.dart';
+import 'package:helistrong/reviews/review_item.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading/indicator/ball_pulse_indicator.dart';
 import 'package:loading/loading.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+import '../authenticator.dart';
 
 
 class ListingDetail extends StatefulWidget {
@@ -26,45 +31,73 @@ class ListingDetail extends StatefulWidget {
 class _ListingDetailState extends State<ListingDetail> {
 
   int _currentImage = 0;
-  final List<String> imgList = ["https://thestayathomechef.com/wp-content/uploads/2014/10/Classic-Braised-Beef-Short-Ribs-3-small.jpg",
-    "https://recipetineats.com/wp-content/uploads/2019/02/Slow-Cooked-Braised-Beef-Short-Ribs_3.jpg",
-    "https://www.thespruceeats.com/thmb/XW_JuQ6Wk642VsnSQts9GIv-eLw=/2243x1682/smart/filters:no_upscale()/short-ribs-2500-56a20fc53df78cf772718708.jpg"];
+  Listing listingDetail;
+  bool dataLoaded = false;
 
   Future<Listing> _getListingInfo(String listingId) async {
     print(listingId);
+    if (this.dataLoaded) {
+      print('ALREADY LOADED');
+      return this.listingDetail;
+    }
 
     var headers = {
     'Content-type': 'application/json',
     'Accept': 'application/json',
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb20uc2Fsc2EuY29ubmV4aW9uIiwiaWF0IjoxNjAxMjI1NDkwLCJleHAiOjE2MDEzMTE4OTAsInVzciI6eyJpZCI6IjJlZjlmMzNlLTI5MWEtNGZiMC04M2RiLWQyNTAzMTIyODk4NiIsIm5hbWUiOiJDaGFybGllIE91IFlhbmciLCJ1cGRhdGVkX2F0IjoiMjAyMC0wOS0wN1QwMjowMzo1OC4xNTUwNDUiLCJjcmVhdGVkX2F0IjoiMjAyMC0wOS0wNVQxODoyMToyOC40MjE2NjAiLCJlbWFpbCI6ImNoYXJsaWVvdXlhbmdAZ21haWwuY29tIiwiZXh0cmFkYXRhIjoie30iLCJ1c2VyX3JvbGVfaWQiOiI1MTQ4NGQyYy03YTNkLTRmZTktYjEwZC01MmQ2ZTc0MDgwMzEifSwicHJtIjp7InRpdGxlIjoiVXNlciIsImRlc2NyaXB0aW9uIjoiUmVndWxhciB1c2VyIiwiaWQiOiI1MTQ4NGQyYy03YTNkLTRmZTktYjEwZC01MmQ2ZTc0MDgwMzEifX0.IIlBA_-i2oqBnwwQ3WxJ7Sk5o6uuPckalc6TRQJDOn0'
+    'Authorization': 'Bearer ${currentUser.userToken}'
     };
+
+    print('Making request for listing and product');
     String url = "https://helistrong.com/api/v1/listings/$listingId?embed=product";
     final http.Response listingResponse = await http.get(
       url,
       headers: headers
     );
+    print('Product/listing request finished');
     var listing_ = json.decode(listingResponse.body);
     var product_ = listing_['product'];
+    var productId = product_['id'];
 
-    url = "https://helistrong.com/api/v1/reviews?product_id=$listingId";
-    final http.Response ReviewsResponse = await http.get(
+    print('Making request for reviews');
+    url = "https://helistrong.com/api/v1/reviews?product_id=$productId";
+    final http.Response reviewsResponse = await http.get(
         url,
         headers: headers
     );
-    print('REQUEST FINISHED!!!!!!');
+    print('Reviews request Finished');
 
-    var reviewsResponse_ = json.decode(ReviewsResponse.body);
+    var reviewsResponse_ = json.decode(reviewsResponse.body);
+
+    print('Making request for user that created listing');
+    url = "https://helistrong.com/api/v1/user_accounts/${listing_['user_id']}";
+    final http.Response userResponse = await http.get(
+        url,
+        headers: headers
+    );
+    print('User request Finished');
+
+    var userResponse_ = json.decode(userResponse.body);
+    User user = User(userResponse_['id'],
+        userResponse_['name'],
+        userResponse_['email'],
+        userResponse_['extradata'],
+        userResponse_['user_role_id'],
+        DateTime.parse(userResponse_['created_at']),
+        DateTime.parse(userResponse_['updated_at']));
+
     List<Review> reviews = [];
     for (var reviewObject in reviewsResponse_) {
+      int numStars = reviewObject['numstars'];
+      print(numStars);
       reviews.add(Review(
         reviewObject['id'],
         reviewObject['name'],
         reviewObject['description'],
-        reviewObject['numStars'],
-        reviewObject['purchaseId'],
-        reviewObject['userId'],
-        reviewObject['createdAt'],
-        reviewObject['updatedAt'],
+        numStars.toDouble(),
+        reviewObject['purchase_id'],
+        reviewObject['user_id'],
+        DateTime.parse(reviewObject['created_at']),
+        DateTime.parse(reviewObject['updated_at']),
       ));
     }
 
@@ -73,24 +106,38 @@ class _ListingDetailState extends State<ListingDetail> {
         listing_['active'],
         listing_['name'],
         listing_['price'],
-        listing_['updated_at'],
+        DateTime.parse(listing_['updated_at']),
         listing_['description'],
-        listing_['created_at'],
+        DateTime.parse(listing_['created_at']),
         listing_['amount_available'],
         listing_['product_id'],
-        listing_['user_id'],
+        user,
         Product(product_['id'],
             product_['active'],
             product_['name'],
-            product_['updated_at'],
+            DateTime.parse(product_['updated_at']),
             product_['description'],
-            product_['created_at'],
+            DateTime.parse(product_['created_at']),
             product_['avg_numstars'],
             product_['image_urls'].cast<String>(),
-            product_['user_id'],
+            user,
             reviews));
 
+    listingDetail.product.reviews.sort((b, a) => a.createdAt.compareTo(b.createdAt));
+    this.dataLoaded = true;
     return listingDetail;
+  }
+
+  // user defined function
+  void _showBuyDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return BuyDialog(listing: listingDetail);
+      },
+    );
   }
 
   @override
@@ -98,39 +145,32 @@ class _ListingDetailState extends State<ListingDetail> {
     print('IN LISTING_DETAIL PAGE');
     print(widget.listingId);
 
-    final List<Widget> imageSliders = imgList.map((item) => Container(
-      child: Container(
-        margin: EdgeInsets.all(3.0),
-        child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            child: Stack(
-              children: <Widget>[
-                Image.network(item, fit: BoxFit.cover, width: 1000.0),
-                Positioned(
-                  bottom: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color.fromARGB(200, 0, 0, 0),
-                          Color.fromARGB(0, 0, 0, 0)
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                  ),
-                ),
-              ],
-            )
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
+            color: Colors.black,
+            onPressed: _showBuyDialog,
+          ),
+        ],
+        backgroundColor: Colors.white,
+        title: Text(
+          "View Listing",
+          style: TextStyle(
+            color: Colors.black,
+          ),
         ),
       ),
-    )).toList();
-
-    return Scaffold(
       body: SafeArea(
         child: FutureBuilder<Listing>(
           future: _getListingInfo(widget.listingId),
@@ -140,16 +180,48 @@ class _ListingDetailState extends State<ListingDetail> {
             if (snapshot.hasData) {
               //Data retrieved!
               print('Data retrieved!');
-              Listing listing = snapshot.data;
+              listingDetail = snapshot.data;
+              int totalReviews = listingDetail.product.reviews.length;
+
+              List<Review> portionReviews = listingDetail.product.reviews;
+              if (portionReviews.length > 3) {
+                portionReviews = portionReviews.sublist(0, 3);
+              }
 
               return ListView(
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
                   CarouselSlider(
-                    items: imageSliders,
+                    items: listingDetail.product.imageUrls.map((item) => Container(
+                      child: Container(
+                        margin: EdgeInsets.all(3.0),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                            child: Stack(
+                              children: <Widget>[
+                                Image.network(item, fit: BoxFit.cover, width: 1000.0),
+                                Positioned(
+                                  bottom: 0.0,
+                                  left: 0.0,
+                                  right: 0.0,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color.fromARGB(200, 0, 0, 0),
+                                          Color.fromARGB(0, 0, 0, 0)
+                                        ],
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                      ),
+                                    ),
+                                    padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                                  ),
+                                ),
+                              ],
+                            )
+                        ),
+                      ),
+                    )).toList(),
                     options: CarouselOptions(
                         aspectRatio: 2.0,
                         onPageChanged: (index, reason) {
@@ -165,7 +237,7 @@ class _ListingDetailState extends State<ListingDetail> {
                       children: [
                         Expanded(
                           child: Text(
-                            listing.name,
+                            listingDetail.name,
                             style: TextStyle(color: Colors.black87, fontSize: 22, fontWeight: FontWeight.w900,),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -176,7 +248,7 @@ class _ListingDetailState extends State<ListingDetail> {
 
 
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 14, 14, 8),
+                    padding: const EdgeInsets.fromLTRB(14, 10, 14, 6),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,27 +257,61 @@ class _ListingDetailState extends State<ListingDetail> {
                           text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: "\$ ${listing.price}",
-                                  style: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w700),
+                                  text: "\$ ${listingDetail.price}",
+                                  style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w600),
                                 ),
                               ]
                           ),
                         ),
                         Text(
-                          "Available: ${listing.amountAvailable.toInt()}",
-                          style: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w700,),
+                          "Available: ${listingDetail.amountAvailable.toInt()}",
+                          style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w600,),
                         ),
                       ],
                     ),
                   ),
                   Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 6, 14, 6),
+                    child: Text(
+                      "From ${listingDetail.user.name}",
+                      style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w600,),
+                    ),
+                  ),
+                  Padding(
                     padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                     child: Text(
-                      listing.description,
+                      listingDetail.description,
                       style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w700,),
                     ),
                   ),
-                ],
+
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 10, 14, 8),
+                    child: RatingBar(
+                      initialRating: listingDetail.product.avgNumStars,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,
+                      itemSize: 25,
+                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                      itemBuilder: (context, _) => Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 8, 14, 14),
+                    child: Text(
+                      "Reviewed $totalReviews times",
+                      style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w700,),
+                    ),
+                  ),
+
+                ]..addAll(portionReviews.map((value) {
+                  return ReviewItem(review: value);
+                }).toList(),),
+
               );
 
             } else if (snapshot.hasError) {
