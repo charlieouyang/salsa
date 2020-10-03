@@ -8,7 +8,7 @@ from sendgrid.helpers.mail import (Email, Mail, Content, To)
 
 def send(action, recipient, data):
     try:
-        sg = sendgrid.SendGridAPIClient(api_key='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')
+        sg = sendgrid.SendGridAPIClient(api_key='')
         from_email = Email('helistrongtogether@gmail.com')
         to_email = To('charlieouyang@hotmail.com')
 
