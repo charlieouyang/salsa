@@ -286,6 +286,12 @@ components:
         listing_id:
           format: uuid4
           type: string
+        notes:
+          type: string
+        buyer_complete:
+          type: boolean
+        seller_complete:
+          type: boolean
       type: object
     PostPurchase:
       allOf:
@@ -294,6 +300,7 @@ components:
         - required:
             - amount
             - listing_id
+            - notes
     PutPurchase:
       allOf:
         - $ref: '#/components/schemas/Purchase'
