@@ -1,12 +1,8 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:helistrong/authenticator.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:helistrong/authenticator.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:helistrong/listings/search_item.dart';
 import 'package:helistrong/listings/listing_detail.dart';
 
