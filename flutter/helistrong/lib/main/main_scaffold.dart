@@ -4,6 +4,7 @@ import 'recent_activity.dart';
 import 'package:helistrong/listings/search.dart';
 import 'general_page.dart';
 import 'package:helistrong/account/view_account_page.dart';
+import 'package:helistrong/seller/view_listings.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -80,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                 //TODO ADD NAVIGATOR
               }),
               _createDrawerItem(Icons.menu, "Listings", () {
-                //TODO ADD NAVIGATOR
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ViewListingsPage()));
               }),
               _createDrawerItem(Icons.menu, "Products", () {
                 //TODO ADD NAVIGATOR
