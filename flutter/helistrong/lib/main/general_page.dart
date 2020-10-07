@@ -153,7 +153,6 @@ class _HomeScaffoldState extends State<HomeScaffold> {
   }
 
   Future getOrderSeller() async {
-    //TODO Add url
     String url = "https://helistrong.com/api/v1/purchases?user_as=seller&embed=listing";
     final http.Response response = await http.get(
       url,
