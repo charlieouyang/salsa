@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:helistrong/authenticator.dart';
+import 'edit_purchase.dart';
 
 class SellerPurchases extends StatefulWidget {
   @override
@@ -33,123 +34,128 @@ class _SellerPurchasesState extends State<SellerPurchases> {
       String buyerFinished, sellerFinished;
       if (purchases[x]["buyer_complete"] == true) {
         buyerComplete = Colors.green;
-        buyerFinished = "True";
+        buyerFinished = "Completed";
       } else {
         buyerComplete = Colors.red;
-        buyerFinished = "False";
+        buyerFinished = "Pending";
       }
       if (purchases[x]["seller_complete"] == true) {
         sellerComplete = Colors.green;
-        sellerFinished = "True";
+        sellerFinished = "Completed";
       } else {
         sellerComplete = Colors.red;
-        sellerFinished = "False";
+        sellerFinished = "Pending";
       }
       convertedPurchases.add(
         Padding(
           padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 10.0),
-          child: Container(
-            height: 120,
-            child: Padding(
-                padding: EdgeInsets.fromLTRB(20.0, 10.0, 2.0, 10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '${purchases[x]['listing']['name']}',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => EditPurchases(buyer: false, purchaseID: purchases[x]['id'],)));
+            },
+            child: Container(
+              height: 120,
+              child: Padding(
+                  padding: EdgeInsets.fromLTRB(20.0, 10.0, 2.0, 10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '${purchases[x]['listing']['name']}',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 5.0,
-                          ),
-                          RichText(
-                            text: TextSpan(
-                                text: "Buyer Complete: ",
-                                style: TextStyle(
-                                  fontSize: 13.0,
-                                  color: Colors.black54,
-                                ),
-                                children: <TextSpan> [
-                                  TextSpan(
-                                    text: buyerFinished,
-                                    style: TextStyle(
-                                      color: buyerComplete,
-                                    ),
-                                  )
-                                ]
+                            SizedBox(
+                              height: 5.0,
                             ),
-                          ),
-                          SizedBox(
-                            height: 5.0,
-                          ),
-                          RichText(
-                            text: TextSpan(
-                                text: "Seller Complete: ",
-                                style: TextStyle(
-                                  fontSize: 13.0,
-                                  color: Colors.black54,
-                                ),
-                                children: <TextSpan> [
-                                  TextSpan(
-                                    text: sellerFinished,
-                                    style: TextStyle(
-                                      color: sellerComplete,
-                                    ),
-                                  )
-                                ]
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Text(
-                                  '\$ ${purchases[x]['listing']['price']}',
-                                  style: const TextStyle(
-                                    fontSize: 12.0,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                Text(
-                                  'Amount: ${purchases[x]['amount'].toInt()}',
-                                  style: const TextStyle(
-                                    fontSize: 12.0,
+                            RichText(
+                              text: TextSpan(
+                                  text: "Buyer Complete: ",
+                                  style: TextStyle(
+                                    fontSize: 13.0,
                                     color: Colors.black54,
                                   ),
-                                ),
-                              ],
+                                  children: <TextSpan> [
+                                    TextSpan(
+                                      text: buyerFinished,
+                                      style: TextStyle(
+                                        color: buyerComplete,
+                                      ),
+                                    )
+                                  ]
+                              ),
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                              height: 5.0,
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                  text: "Seller Complete: ",
+                                  style: TextStyle(
+                                    fontSize: 13.0,
+                                    color: Colors.black54,
+                                  ),
+                                  children: <TextSpan> [
+                                    TextSpan(
+                                      text: sellerFinished,
+                                      style: TextStyle(
+                                        color: sellerComplete,
+                                      ),
+                                    )
+                                  ]
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                )
-            ),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey,
-                width: 1,
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 4,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Text(
+                                    '\$ ${purchases[x]['listing']['price']}',
+                                    style: const TextStyle(
+                                      fontSize: 12.0,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Amount: ${purchases[x]['amount'].toInt()}',
+                                    style: const TextStyle(
+                                      fontSize: 12.0,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
               ),
-              borderRadius: BorderRadius.circular(4),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.grey,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
             ),
           ),
         ),
