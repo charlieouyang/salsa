@@ -35,6 +35,7 @@ dependencies:
   flutter_rating_bar: ^3.0.1+1
   loading: ^1.0.2
   carousel_slider: ^2.2.1
+  multi_image_picker: ^4.7.14
 
 dev_dependencies:
   flutter_test:

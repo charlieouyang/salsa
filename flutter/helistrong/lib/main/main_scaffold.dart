@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'recent_activity.dart';
@@ -5,6 +7,8 @@ import 'package:helistrong/listings/search.dart';
 import 'general_page.dart';
 import 'package:helistrong/account/view_account_page.dart';
 import 'package:helistrong/seller/view_listings.dart';
+import 'package:helistrong/seller/view_products.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,6 +22,51 @@ class _HomePageState extends State<HomePage> {
     RecentActivityPage(),
     MainListingsPage(),
   ];
+
+  _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => new CupertinoAlertDialog(
+        title: Text("Confirm Logout?"),
+        content: Text("This will remove the current user from the session and return you to the login screen."),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Center(child:
+              Text(
+                "Cancel",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          FlatButton(
+            onPressed: () {
+              logout();
+            },
+            child: Center(child:
+              Text(
+                "Logout",
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ),
+        ],
+      )
+    );
+  }
+
+  void logout() async {
+    SharedPreferences currentSession = await SharedPreferences.getInstance();
+    currentSession.setString("email", null);
+    currentSession.setString("password", null);
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+  }
 
   Widget _createDrawerItem(IconData icon, String text, GestureTapCallback onTap) {
     return ListTile(
@@ -72,19 +121,11 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(context, MaterialPageRoute(builder: (context) => ViewMyAccount()));
             }),
             _createExpansionTile([
-              _createDrawerItem(Icons.menu, "Purchased Items", () {
-                //TODO ADD NAVIGATOR
-              }),
-            ], Icons.attach_money, "Buyer"),
-            _createExpansionTile([
-              _createDrawerItem(Icons.menu, "Sold Items", () {
-                //TODO ADD NAVIGATOR
-              }),
               _createDrawerItem(Icons.menu, "Listings", () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ViewListingsPage()));
               }),
               _createDrawerItem(Icons.menu, "Products", () {
-                //TODO ADD NAVIGATOR
+                Navigator.pushNamed(context, '/ViewProducts');
               }),
             ], Icons.shop, "Seller"),
             _createDrawerItem(Icons.arrow_back_ios, "Log Out", () {
