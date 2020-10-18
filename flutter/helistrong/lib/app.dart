@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:helistrong/seller/view_products.dart';
 import 'login_page.dart';
 
 void main() {
@@ -12,6 +12,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      routes: {
+        '/ViewProducts': (context) => ViewProducts(),
+        '/login': (context) => LoginPage(),
+      },
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
         bottomAppBarColor: Colors.black,
