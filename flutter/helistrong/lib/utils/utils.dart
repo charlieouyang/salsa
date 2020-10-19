@@ -13,3 +13,9 @@ bool isNumeric(String s) {
   }
   return double.tryParse(s) != null;
 }
+
+bool isEmailValid(String s) {
+  bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(s);
+
+  return emailValid;
+}

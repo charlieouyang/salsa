@@ -15,6 +15,7 @@ class _ViewProductsState extends State<ViewProducts> {
   Future products;
   
   Future getProducts() async {
+    List<dynamic> userProducts = [];
     String url = "https://helistrong.com/api/v1/products";
     final http.Response response = await http.get(
       url,
@@ -24,7 +25,13 @@ class _ViewProductsState extends State<ViewProducts> {
         'Authorization': 'Bearer ${currentUser.userToken}'
       }
     );
-    return jsonDecode(response.body);
+    var products = jsonDecode(response.body);
+    for (int x = 0; x < products.length; x++) {
+      if (products[x]['user_id'] == currentUser.userRole) {
+        userProducts.add(products[x]);
+      }
+    }
+    return userProducts;
   }
 
   List<Widget> _convertProducts(var products) {

@@ -5,6 +5,7 @@ import 'package:helistrong/main/main_scaffold.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:helistrong/account/new_account_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -188,7 +189,9 @@ class _LoginPageState extends State<LoginPage> {
           Center(
             child: GestureDetector(
               onTap: () {
-
+                Navigator.push(context, PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) => CreateUserForm()
+                ));
               },
               child: Container(
                 height: 50.0,

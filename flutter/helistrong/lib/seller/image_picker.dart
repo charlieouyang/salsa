@@ -5,8 +5,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'dart:convert';
-
-void main() => runApp(new MyApp());
+import 'package:helistrong/authenticator.dart';
 
 class MyApp extends StatefulWidget {
   MyApp({this.description, this.name, this.categoryIDs});
@@ -15,7 +14,11 @@ class MyApp extends StatefulWidget {
   final String description;
 
   @override
-  _MyAppState createState() => new _MyAppState();
+  _MyAppState createState() => new _MyAppState(
+    categoryIDs: categoryIDs,
+    name: name,
+    description: description,
+  );
 }
 
 class _MyAppState extends State<MyApp> {
@@ -124,7 +127,7 @@ class _MyAppState extends State<MyApp> {
 
     request.headers.addAll({
       'Accept': 'application/json',
-      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb20uc2Fsc2EuY29ubmV4aW9uIiwiaWF0IjoxNTk4NzUzOTg1LCJleHAiOjE1OTg4NDAzODUsInVzciI6eyJpZCI6IjJlZjlmMzNlLTI5MWEtNGZiMC04M2RiLWQyNTAzMTIyODk4NiIsInVwZGF0ZWRfYXQiOiIyMDIwLTA3LTA1VDIxOjAyOjE1Ljc4NjE4MiIsIm5hbWUiOiJDaGFybGllIE91IFlhbmciLCJlbWFpbCI6ImNoYXJsaWVvdXlhbmdAZ21haWwuY29tIiwiZXh0cmFkYXRhIjoie30iLCJ1c2VyX3JvbGVfaWQiOiI1MTQ4NGQyYy03YTNkLTRmZTktYjEwZC01MmQ2ZTc0MDgwMzEiLCJjcmVhdGVkX2F0IjoiMjAyMC0wNy0wNVQyMTowMjoxNS43ODYxODIifSwicHJtIjp7InRpdGxlIjoiVXNlciIsImRlc2NyaXB0aW9uIjoiUmVndWxhciB1c2VyIiwiaWQiOiI1MTQ4NGQyYy03YTNkLTRmZTktYjEwZC01MmQ2ZTc0MDgwMzEifX0.bnLrBcR8pxylXNMppKQikFLuf2_1QWimxN65F57B3X8'
+      'Authorization': 'Bearer ${currentUser.userToken}'
     });
     // send
 
@@ -145,14 +148,17 @@ class _MyAppState extends State<MyApp> {
     // Status codes
     if (statusCode == 201) {
       // 201 - Success: Images created
-      var fileUrls = responseObject['file_urls'];
+      List<String> fileUrls = [];
+      for (int x = 0; x < responseObject['file_urls'].length; x++) {
+        fileUrls.add(responseObject['file_urls'][x]);
+      }
       print('GOT FILE URLS! Going to add them to the product');
       print(fileUrls);
       Navigator.push(context, MaterialPageRoute(builder: (context) => CreateProduct(
         description: description,
         categoryIDs: categoryIDs,
         name: name,
-        imageURLS: responseObject,
+        imageURLS: fileUrls,
       )));
     } else if (statusCode == 400) {
       // 400 - Bad request
@@ -199,3 +205,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+

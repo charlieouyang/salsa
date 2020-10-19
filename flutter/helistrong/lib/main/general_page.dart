@@ -256,7 +256,43 @@ class _HomeScaffoldState extends State<HomeScaffold> {
                   child: buildPurchase(buyerComplete, sellerComplete, buyerFinished, sellerFinished, snapshot.data['amount'].toInt(), snapshot.data['listing']['price'], snapshot.data['listing']['name']),
                 );
               } else {
-                return Text("loading...");
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Container(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.error,
+                              color: Colors.black54,
+                              size: 35.0,
+                            ),
+                            SizedBox(
+                              height: 25.0,
+                            ),
+                            Text(
+                                "No Purchase has been made yet on this account",
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                color: Colors.black54,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                } else {
+                  return Text("loading...");
+                }
               }
             },
           ),
@@ -292,7 +328,43 @@ class _HomeScaffoldState extends State<HomeScaffold> {
                   child: buildPurchase(buyerComplete, sellerComplete, buyerFinished, sellerFinished, snapshot.data['amount'].toInt(), snapshot.data['listing']['price'], snapshot.data['listing']['name']),
                 );
               } else {
-                return Text("loading...");
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Container(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.error,
+                              color: Colors.black54,
+                              size: 35.0,
+                            ),
+                            SizedBox(
+                              height: 25.0,
+                            ),
+                            Text(
+                              "No Purchase has been requested yet on this account",
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                color: Colors.black54,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                } else {
+                  return Text("loading...");
+                }
               }
             },
           ),
