@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helistrong/seller/create_product.dart';
 import 'dart:async';
@@ -6,26 +7,30 @@ import 'package:http/http.dart' as http;
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'dart:convert';
 import 'package:helistrong/authenticator.dart';
+import 'edit_product.dart';
 
 class MyApp extends StatefulWidget {
-  MyApp({this.description, this.name, this.categoryIDs});
+  MyApp({this.description, this.name, this.categoryIDs, this.edit = false});
   final List<String> categoryIDs;
   final String name;
   final String description;
+  final bool edit;
 
   @override
   _MyAppState createState() => new _MyAppState(
     categoryIDs: categoryIDs,
     name: name,
     description: description,
+    edit: edit,
   );
 }
 
 class _MyAppState extends State<MyApp> {
-  _MyAppState({this.categoryIDs, this.name, this.description});
+  _MyAppState({this.categoryIDs, this.name, this.description, this.edit});
   final List<String> categoryIDs;
   final String name;
   final String description;
+  final bool edit;
 
   List<Asset> images = List<Asset>();
   String _error = 'No Error Dectected';
@@ -154,12 +159,21 @@ class _MyAppState extends State<MyApp> {
       }
       print('GOT FILE URLS! Going to add them to the product');
       print(fileUrls);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateProduct(
-        description: description,
-        categoryIDs: categoryIDs,
-        name: name,
-        imageURLS: fileUrls,
-      )));
+      if (edit == true) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => EditProduct(
+          productName: name,
+          description: description,
+          categoryIDs: categoryIDs,
+          imageURLs: fileUrls,
+        )));
+      } else {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => CreateProduct(
+          description: description,
+          categoryIDs: categoryIDs,
+          name: name,
+          imageURLS: fileUrls,
+        )));
+      }
     } else if (statusCode == 400) {
       // 400 - Bad request
       var errorDetails = responseObject['detail'];
@@ -182,7 +196,14 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return new MaterialApp(
       home: new Scaffold(
-        appBar: new AppBar(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back_ios),
+          ),
           title: const Text('Plugin example app'),
         ),
         body: Column(

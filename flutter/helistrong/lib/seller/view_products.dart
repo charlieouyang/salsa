@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:helistrong/authenticator.dart';
 import 'create_product.dart';
+import 'edit_product.dart';
 
 class ViewProducts extends StatefulWidget {
   @override
@@ -36,7 +37,23 @@ class _ViewProductsState extends State<ViewProducts> {
 
   List<Widget> _convertProducts(var products) {
     List<Widget> convertedPurchases = [];
+
     for (int x = 0; x < products.length; x++) {
+      String image;
+      List<String> categoryIDs=[];
+      List<String> imageURLs=[];
+      for (int y = 0; y < products[x]['image_urls'].length; y++) {
+        imageURLs.add(products[x]['image_urls'][y]);
+      }
+      for (int z = 0; z < products[x]['product_categories'].length; z++) {
+        categoryIDs.add(products[x]['product_categories'][z]);
+      }
+      if (products[x]['image_urls'].isEmpty) {
+        image = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1200px-No_image_available.svg.png";
+      } else {
+        image = products[x]['image_urls'][0];
+      }
+      print(categoryIDs);
       convertedPurchases.add(
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -47,79 +64,90 @@ class _ViewProductsState extends State<ViewProducts> {
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: SizedBox(
                     height: 100,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        AspectRatio(
-                          aspectRatio: 1.0,
-                          child: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Image.network(products[x]['image_urls'][0]),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => EditProduct(
+                          productName: products[x]['name'],
+                          description: products[x]['description'],
+                          productID: products[x]['id'],
+                          imageURLs: imageURLs,
+                          categoryIDs: categoryIDs,
+                        )));
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          AspectRatio(
+                            aspectRatio: 1.0,
+                            child: Container(
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Image.network(image),
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                              padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 1,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '${products[x]['name']}',
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const Padding(padding: EdgeInsets.only(bottom: 2.0)),
-                                        Text(
-                                          '${products[x]['description']}',
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 12.0,
-                                            color: Colors.black54,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 10.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          RatingBar(
-                                            initialRating: products[x]['avg_numstars'],
-                                            direction: Axis.horizontal,
-                                            allowHalfRating: true,
-                                            itemCount: 5,
-                                            itemSize: 15,
-                                            itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
-                                            itemBuilder: (context, _) => Icon(
-                                              Icons.star,
-                                              color: Colors.amber,
+                          Expanded(
+                              child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Expanded(
+                                        flex: 1,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              '${products[x]['name']}',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            const Padding(padding: EdgeInsets.only(bottom: 2.0)),
+                                            Text(
+                                              '${products[x]['description']}',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 12.0,
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                          ),
-                        )
-                      ],
+                                      Expanded(
+                                        flex: 1,
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 10.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: <Widget>[
+                                              RatingBar(
+                                                initialRating: products[x]['avg_numstars'],
+                                                direction: Axis.horizontal,
+                                                allowHalfRating: true,
+                                                itemCount: 5,
+                                                itemSize: 15,
+                                                itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
+                                                itemBuilder: (context, _) => Icon(
+                                                  Icons.star,
+                                                  color: Colors.amber,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -150,6 +178,14 @@ class _ViewProductsState extends State<ViewProducts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.popUntil(context, ModalRoute.withName('/HomePage'));
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+          ),
+        ),
         title: Text("Products"),
         actions: [
           IconButton(

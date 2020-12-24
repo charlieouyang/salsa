@@ -164,7 +164,7 @@ class _CreateListingPageState extends State<CreateListingPage> {
                     var status = await postListing(params);
                     print(status);
                     if (status == 201) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                      Navigator.pushNamed(context, '/HomePage');
                     } else {
                       setState(() {
                         notVerified = "Something went wrong";

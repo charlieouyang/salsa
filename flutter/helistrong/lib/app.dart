@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helistrong/seller/view_products.dart';
 import 'login_page.dart';
+import 'package:helistrong/main/main_scaffold.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/ViewProducts': (context) => ViewProducts(),
         '/login': (context) => LoginPage(),
+        '/HomePage': (context) => HomePage(),
       },
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
