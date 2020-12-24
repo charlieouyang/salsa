@@ -1,56 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:helistrong/authenticator.dart';
+import 'dart:convert';
 import 'image_picker.dart';
 
-class CreateProduct extends StatefulWidget {
-  CreateProduct({this.imageURLS, this.description, this.name, this.categoryIDs});
-  final List<String> imageURLS;
-  final List<String> categoryIDs;
-  final String name;
+class EditProduct extends StatefulWidget {
+  EditProduct({this.productName, this.description, this.categoryIDs, this.imageURLs, this.productID});
+  final String productName;
   final String description;
+  final List<String> categoryIDs;
+  final List<String> imageURLs;
+  final String productID;
   @override
-  _CreateProductState createState() => _CreateProductState(
-    imageURLS: imageURLS,
-    categoryIDs: categoryIDs,
-    name: name,
+  _EditProductState createState() => _EditProductState(
+    productName: productName,
     description: description,
+    categoryIDs: categoryIDs,
+    imageURLs: imageURLs,
+    productID: productID,
   );
 }
 
-class _CreateProductState extends State<CreateProduct> {
-  _CreateProductState({this.imageURLS, this.description, this.categoryIDs, this.name});
-  final List<String> imageURLS;
-  final List<String> categoryIDs;
-  final String name;
+class _EditProductState extends State<EditProduct> {
+  _EditProductState({this.productName, this.description, this.categoryIDs, this.imageURLs, this.productID});
+  final String productName;
   final String description;
+  final List<String> categoryIDs;
+  final List<String> imageURLs;
+  final String productID;
 
-  final TextEditingController productName = TextEditingController();
+  final TextEditingController product = TextEditingController();
   final TextEditingController productDescription = TextEditingController();
 
   Future categories;
+  Future convertCategories;
+  List<String> productCategories = [];
   List<Color> categorySelected = [];
-
   final _formKey = GlobalKey<FormState>();
 
   Future getCategories() async {
+    convertProductCategories();
     String url = "https://helistrong.com/api/v1/categories";
+    final http.Response response = await http.get(
+        url,
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${currentUser.userToken}'
+        }
+    );
+    return jsonDecode(response.body);
+  }
+
+  Future convertProductCategories() async {
+    String url = "https://helistrong.com/api/v1/product_categories/$productID";
     final http.Response response = await http.get(
       url,
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer ${currentUser.userToken}'
-      }
+      },
     );
-    return jsonDecode(response.body);
+    var body = jsonDecode(response.body);
+    for (int x = 0; x < body.length; x++) {
+      productCategories.add(body[x]['category_id']);
+      print (productCategories);
+    }
+    return true;
   }
 
   _buildCategories(var categories) {
     List<Widget> convertedCategories = [];
     for(int x = 0; x < categories.length; x++) {
-      if (categoryIDs.contains(categories[x]['id'])) {
+      if (productCategories.contains(categories[x]['id'])) {
         categorySelected.add(
           Colors.black,
         );
@@ -60,58 +83,62 @@ class _CreateProductState extends State<CreateProduct> {
         );
       }
       convertedCategories.add(
-        GestureDetector(
-          onTap: () {
-            if (categoryIDs.contains(categories[x]['id'])) {
-              categoryIDs.remove(categories[x]['id']);
-              setState(() {
-                categorySelected[x] = Colors.black38;
-              });
-            } else {
-              categoryIDs.add(categories[x]['id']);
-              setState(() {
-                categorySelected[x] = Colors.black;
-              });
-            }
-          },
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Container(
-              height: 40.0,
-              width: 100.0,
-              child: Center(
-                child: Text(
-                  categories[x]['name'],
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12.0,
+          GestureDetector(
+            onTap: () {
+              if (productCategories.contains(categories[x]['id'])) {
+                productCategories.remove(categories[x]['id']);
+                setState(() {
+                  categorySelected[x] = Colors.black38;
+                });
+                print(productCategories);
+              } else {
+                productCategories.add(categories[x]['id']);
+                setState(() {
+                  categorySelected[x] = Colors.black;
+                });
+                print(productCategories);
+              }
+            },
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Container(
+                height: 40.0,
+                width: 100.0,
+                child: Center(
+                  child: Text(
+                    categories[x]['name'],
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12.0,
+                    ),
                   ),
                 ),
-              ),
-              decoration: BoxDecoration(
-                color: categorySelected[x],
-                borderRadius: BorderRadius.circular(4.0),
+                decoration: BoxDecoration(
+                  color: categorySelected[x],
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
               ),
             ),
-          ),
-        )
+          )
       );
     }
     return convertedCategories;
   }
+
+
   @override
   void initState() {
     super.initState();
-    categories = getCategories();
-    productName.text = name;
+    product.text = productName;
     productDescription.text = description;
+    categories = getCategories();
   }
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Create Product",
+          "Edit Product",
           style: TextStyle(
             color: Colors.black,
           ),
@@ -148,7 +175,7 @@ class _CreateProductState extends State<CreateProduct> {
                         }
                         return null;
                       },
-                      controller: productName,
+                      controller: product,
                       maxLines: 1,
                     ),
                     SizedBox(
@@ -186,16 +213,16 @@ class _CreateProductState extends State<CreateProduct> {
                       height: 250,
                       child: GridView.count(
                         crossAxisCount: 3,
-                        children: List.generate(imageURLS.length, (index) {
+                        children: List.generate(imageURLs.length, (index) {
                           return Image(
-                            image: NetworkImage(imageURLS[index]),
+                            image: NetworkImage(imageURLs[index]),
                             width: 250,
                             height: 250,
                           );
                         }),
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black12
+                          color: Colors.black12
                       ),
                     ),
                     SizedBox(
@@ -205,8 +232,9 @@ class _CreateProductState extends State<CreateProduct> {
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(
                           description: productDescription.text,
-                          name: productName.text,
+                          name: product.text,
                           categoryIDs: categoryIDs,
+                          edit: true,
                         )));
                       },
                       child: Container(
@@ -216,18 +244,18 @@ class _CreateProductState extends State<CreateProduct> {
                           child: Text(
                             "Pick Images",
                             style: TextStyle(
-                              fontSize: 15.0,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w700
+                                fontSize: 15.0,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w700
                             ),
                           ),
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(6.0),
-                          border: Border.all(
-                            color: Colors.black,
-                          )
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(6.0),
+                            border: Border.all(
+                              color: Colors.black,
+                            )
                         ),
                       ),
                     ),
@@ -238,15 +266,14 @@ class _CreateProductState extends State<CreateProduct> {
                       onTap: () async {
                         if (_formKey.currentState.validate() == true) {
                           var params = {};
-                          params['active'] = true;
-                          params['name'] = productName.text;
+                          params['name'] = product.text;
                           params['description'] = productDescription.text;
-                          if (imageURLS.isEmpty) {
-                            imageURLS.add("https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1200px-No_image_available.svg.png");
+                          if (imageURLs.isEmpty) {
+                            imageURLs.add("https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1200px-No_image_available.svg.png");
                           }
-                          params['image_urls'] = imageURLS;
-                          String url = "https://helistrong.com/api/v1/products";
-                          final http.Response response = await http.post(
+                          params['image_urls'] = imageURLs;
+                          String url = "https://helistrong.com/api/v1/products/$productID";
+                          final http.Response response = await http.put(
                             url,
                             headers: {
                               'Content-type': 'application/json',
@@ -255,24 +282,24 @@ class _CreateProductState extends State<CreateProduct> {
                             },
                             body: jsonEncode(params),
                           );
-                          var categoryParams = {};
-                          if (response.statusCode == 201) {
-                            var newProduct = jsonDecode(response.body);
-                            categoryParams['product_id'] = newProduct['id'];
-                            categoryParams['category_ids'] = categoryIDs;
+                          print(response.statusCode);
+                          if (response.statusCode == 200) {
+                            var categoryParams = {};
+                            categoryParams['product_id'] = productID;
+                            categoryParams['category_ids'] = productCategories;
                             final http.Response categoryResponse = await http.post(
-                                "https://helistrong.com/api/v1/product_categories",
-                                headers: {
-                                  'Content-type': 'application/json',
-                                  'Accept': 'application/json',
-                                  'Authorization': 'Bearer ${currentUser.userToken}'
-                                },
-                                body: jsonEncode(categoryParams),
+                              "https://helistrong.com/api/v1/product_categories",
+                              headers: {
+                                'Content-type': 'application/json',
+                                'Accept': 'application/json',
+                                'Authorization': 'Bearer ${currentUser.userToken}'
+                              },
+                              body: jsonEncode(categoryParams),
                             );
                             print(categoryResponse.body);
                             print(categoryResponse.statusCode);
-                            if (response.statusCode == 201 && categoryResponse.statusCode == 201) {
-                              Navigator.popUntil(context, ModalRoute.withName('/ViewProducts'));
+                            if (categoryResponse.statusCode == 201) {
+                              Navigator.pushNamedAndRemoveUntil(context, '/HomePage', ModalRoute.withName('/HomePage'));
                             }
                           }
                         }
@@ -282,7 +309,7 @@ class _CreateProductState extends State<CreateProduct> {
                         width: 250.0,
                         child: Center(
                           child: Text(
-                            "CREATE!",
+                            "SAVE!",
                             style: TextStyle(
                                 fontSize: 18.0,
                                 color: Colors.blue,

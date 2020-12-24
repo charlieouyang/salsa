@@ -5,6 +5,7 @@ import 'package:helistrong/main/main_scaffold.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:helistrong/account/new_account_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -43,9 +44,7 @@ class _LoginPageState extends State<LoginPage> {
         var loginBody = jsonDecode(loginResult.body);
         currentUser.userToken = loginBody['token'];
         currentUser.userRole = loginBody['user_account_id'];
-        Navigator.push(context, PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) => HomePage()
-        ));
+        Navigator.pushNamed(context, '/HomePage');
       } else {
         var loginBody = jsonDecode(loginResult.body);
         setState(() {
@@ -143,9 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                     currentUser.userToken = loginBody['token'];
                     currentUser.userRole = loginBody['user_account_id'];
                     setLogin(loginEmailController.text, passwordController.text);
-                    Navigator.push(context, PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) => HomePage()
-                    ));
+                    Navigator.pushNamed(context, '/HomePage');
                   } else {
                     print(loginResult.statusCode);
                     var loginBody = jsonDecode(loginResult.body);
@@ -188,7 +185,9 @@ class _LoginPageState extends State<LoginPage> {
           Center(
             child: GestureDetector(
               onTap: () {
-
+                Navigator.push(context, PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) => CreateUserForm()
+                ));
               },
               child: Container(
                 height: 50.0,

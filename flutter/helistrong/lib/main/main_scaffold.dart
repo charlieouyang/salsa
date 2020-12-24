@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'recent_activity.dart';
@@ -129,7 +127,7 @@ class _HomePageState extends State<HomePage> {
               }),
             ], Icons.shop, "Seller"),
             _createDrawerItem(Icons.arrow_back_ios, "Log Out", () {
-              //TODO ADD LOGOUT
+              _showLogoutDialog();
             }),
           ],
         ),
