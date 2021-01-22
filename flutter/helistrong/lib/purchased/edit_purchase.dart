@@ -479,47 +479,6 @@ class _EditPurchasesState extends State<EditPurchases> {
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 22.0, horizontal: 75.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            height: 50.0,
-                            width: double.infinity,
-                            child: Center(
-                              child: Text(
-                                "CANCEL",
-                                style: TextStyle(
-                                  fontSize: 22.0,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(13.0),
-                                border: Border.all(
-                                  color: Colors.grey,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    offset: Offset(0.0, 1.0),
-                                    blurRadius: 0.0,
-                                  ),
-                                ]
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 22.0, horizontal: 75.0),
                           child: GestureDetector(
                             onTap: () async {
@@ -585,6 +544,9 @@ class _EditPurchasesState extends State<EditPurchases> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Edit your purchase"),
+      ),
       body: _body(),
     );
   }

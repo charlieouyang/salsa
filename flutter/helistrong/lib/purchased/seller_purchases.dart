@@ -13,33 +13,31 @@ class _SellerPurchasesState extends State<SellerPurchases> {
 
   Future purchases;
 
-  Future getOrderSeller() async {
-    String url = "https://helistrong.com/api/v1/purchases?user_as=seller&embed=listing";
+  Future testOrderSeller() async {
     final http.Response response = await http.get(
-        url,
+      "https://helistrong.com/api/v1/purchases?user_as=seller&embed=listing",
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json',
           'Authorization': 'Bearer ${currentUser.userToken}',
-        }
-    );
-    var order = jsonDecode(response.body);
-    return order;
+        });
+    var orders = jsonDecode(response.body);
+    return orders;
   }
 
-  _convertPurchases(var purchases) {
+  _convertPurchases(var allPurchases) {
     List<Widget> convertedPurchases = [];
-    for(int x = 0; x < purchases.length; x++) {
+    for(int x = 0; x < allPurchases.length; x++) {
       Color buyerComplete, sellerComplete;
       String buyerFinished, sellerFinished;
-      if (purchases[x]["buyer_complete"] == true) {
+      if (allPurchases[x]["buyer_complete"] == true) {
         buyerComplete = Colors.green;
         buyerFinished = "Completed";
       } else {
         buyerComplete = Colors.red;
         buyerFinished = "Pending";
       }
-      if (purchases[x]["seller_complete"] == true) {
+      if (allPurchases[x]["seller_complete"] == true) {
         sellerComplete = Colors.green;
         sellerFinished = "Completed";
       } else {
@@ -51,7 +49,7 @@ class _SellerPurchasesState extends State<SellerPurchases> {
           padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 10.0),
           child: GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => EditPurchases(buyer: false, purchaseID: purchases[x]['id'],)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => EditPurchases(buyer: false, purchaseID: allPurchases[x]['id'],)));
             },
             child: Container(
               height: 120,
@@ -66,7 +64,7 @@ class _SellerPurchasesState extends State<SellerPurchases> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              '${purchases[x]['listing']['name']}',
+                              '${allPurchases[x]['listing']['name']}',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -127,14 +125,14 @@ class _SellerPurchasesState extends State<SellerPurchases> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
                                   Text(
-                                    '\$ ${purchases[x]['listing']['price']}',
+                                    '\$ ${allPurchases[x]['listing']['price']}',
                                     style: const TextStyle(
                                       fontSize: 12.0,
                                       color: Colors.black87,
                                     ),
                                   ),
                                   Text(
-                                    'Amount: ${purchases[x]['amount'].toInt()}',
+                                    'Amount: ${allPurchases[x]['amount'].toInt()}',
                                     style: const TextStyle(
                                       fontSize: 12.0,
                                       color: Colors.black54,
@@ -165,10 +163,12 @@ class _SellerPurchasesState extends State<SellerPurchases> {
   }
   @override
   void initState() {
+    purchases = testOrderSeller();
     super.initState();
-    purchases = getOrderSeller();
   }
+
   Widget build(BuildContext context) {
+    //TODO Change to streambuilder, monitor for changes
     return FutureBuilder(
       future: purchases,
       builder: (BuildContext context, AsyncSnapshot snapshot) {

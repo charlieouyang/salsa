@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -11,23 +12,22 @@ class BuyerPurchases extends StatefulWidget {
 
 class _BuyerPurchasesState extends State<BuyerPurchases> {
 
-  Future purchases;
+  Future buyerOrders;
 
-  Future getOrderBuyer() async {
-    String url = "https://helistrong.com/api/v1/purchases?user_as=buyer&embed=listing";
+  Future testOrderBuyer() async {
     final http.Response response = await http.get(
-        url,
+      "https://helistrong.com/api/v1/purchases?user_as=buyer&embed=listing",
         headers: {
           'Content-type': 'application/json',
           'Accept': 'application/json',
           'Authorization': 'Bearer ${currentUser.userToken}',
-        }
-    );
-    var order = jsonDecode(response.body);
-    return order;
+        });
+    var orders = jsonDecode(response.body);
+    print(orders);
+    return orders;
   }
 
-  _convertPurchases(var purchases) {
+  _convertPurchases(allPurchases) {
     List<Widget> convertedPurchases = [];
     List<Widget> reviewNeeded = [];
     List<Widget> actionNotNeeded = [];
@@ -44,17 +44,17 @@ class _BuyerPurchasesState extends State<BuyerPurchases> {
         ),
       )
     );
-    for(int x = 0; x < purchases.length; x++) {
+    for(int x = 0; x < allPurchases.length; x++) {
       Color buyerComplete, sellerComplete;
       String buyerFinished, sellerFinished;
-      if (purchases[x]["buyer_complete"] == true) {
+      if (allPurchases[x]["buyer_complete"] == true) {
         buyerComplete = Colors.green;
         buyerFinished = "Completed";
       } else {
         buyerComplete = Colors.red;
         buyerFinished = "Pending";
       }
-      if (purchases[x]["seller_complete"] == true) {
+      if (allPurchases[x]["seller_complete"] == true) {
         sellerComplete = Colors.green;
         sellerFinished = "Completed";
       } else {
@@ -62,7 +62,7 @@ class _BuyerPurchasesState extends State<BuyerPurchases> {
         sellerFinished = "Pending";
       }
 
-      if(purchases[x]["buyer_complete"] == true && purchases[x]["seller_complete"] == true && purchases[x]['reviews'].length == 0) {
+      if(allPurchases[x]["buyer_complete"] == true && allPurchases[x]["seller_complete"] == true && allPurchases[x]['reviews'].length == 0) {
         reviewNeeded.add(
           Padding(
             padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 10.0),
@@ -72,7 +72,7 @@ class _BuyerPurchasesState extends State<BuyerPurchases> {
                   padding: EdgeInsets.fromLTRB(20.0, 10.0, 2.0, 10.0),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => EditPurchases(buyer: true, purchaseID: purchases[x]['id'],)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => EditPurchases(buyer: true, purchaseID: allPurchases[x]['id'],)));
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +83,7 @@ class _BuyerPurchasesState extends State<BuyerPurchases> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                '${purchases[x]['listing']['name']}',
+                                '${allPurchases[x]['listing']['name']}',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -144,14 +144,14 @@ class _BuyerPurchasesState extends State<BuyerPurchases> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     Text(
-                                      '\$ ${purchases[x]['listing']['price']}',
+                                      '\$ ${allPurchases[x]['listing']['price']}',
                                       style: const TextStyle(
                                         fontSize: 12.0,
                                         color: Colors.black87,
                                       ),
                                     ),
                                     Text(
-                                      'Amount: ${purchases[x]['amount'].toInt()}',
+                                      'Amount: ${allPurchases[x]['amount'].toInt()}',
                                       style: const TextStyle(
                                         fontSize: 12.0,
                                         color: Colors.black54,
@@ -183,7 +183,7 @@ class _BuyerPurchasesState extends State<BuyerPurchases> {
             padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 10.0),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => EditPurchases(buyer: true, purchaseID: purchases[x]['id'],)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => EditPurchases(buyer: true, purchaseID: allPurchases[x]['id'],)));
               },
               child: Container(
                 height: 120,
@@ -198,7 +198,7 @@ class _BuyerPurchasesState extends State<BuyerPurchases> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                '${purchases[x]['listing']['name']}',
+                                '${allPurchases[x]['listing']['name']}',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -259,14 +259,14 @@ class _BuyerPurchasesState extends State<BuyerPurchases> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     Text(
-                                      '\$ ${purchases[x]['listing']['price']}',
+                                      '\$ ${allPurchases[x]['listing']['price']}',
                                       style: const TextStyle(
                                         fontSize: 12.0,
                                         color: Colors.black87,
                                       ),
                                     ),
                                     Text(
-                                      'Amount: ${purchases[x]['amount'].toInt()}',
+                                      'Amount: ${allPurchases[x]['amount'].toInt()}',
                                       style: const TextStyle(
                                         fontSize: 12.0,
                                         color: Colors.black54,
@@ -319,21 +319,22 @@ class _BuyerPurchasesState extends State<BuyerPurchases> {
   @override
   void initState() {
     super.initState();
-    purchases = getOrderBuyer();
+    buyerOrders = testOrderBuyer();
   }
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: purchases,
+      future: buyerOrders,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           return ListView(
             shrinkWrap: true,
-            children: _convertPurchases(snapshot.data)
+            children: _convertPurchases(snapshot.data),
           );
         } else {
-          return Text("loading...");
+            return Text("loading");
         }
       },
     );
   }
 }
+

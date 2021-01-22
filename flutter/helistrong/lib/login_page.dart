@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:helistrong/account/new_account_page.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -13,6 +14,14 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+  var initializationSettingsAndroid;
+  var initializationSettingsIOS;
+  var initializationSettings;
+
+
+
 
   final TextEditingController loginEmailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -60,9 +69,30 @@ class _LoginPageState extends State<LoginPage> {
     currentSession.setString("password", password);
   }
 
-  @override
+  Future onDidReceiveLocalNotification(int id, String title, String body, String detail) async {
+
+  }
+
+  Future onSelectNotification(String payload) async {
+    if(payload != null) {
+      debugPrint("notification payload: $payload");
+    }
+    await Navigator.pushNamed(context, "/login");
+  }
+
+   @override
   void initState() {
     super.initState();
+    // initializationSettingsAndroid = new AndroidInitializationSettings('app_icon');
+    // initializationSettingsIOS = new IOSInitializationSettings(
+    //   onDidReceiveLocalNotification: onDidReceiveLocalNotification
+    // );
+    // initializationSettings = new InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    // flutterLocalNotificationsPlugin.initialize(
+    //   initializationSettings,
+    //   onSelectNotification: onSelectNotification,
+    // );
+    //
     autoLogin();
   }
 
