@@ -5,16 +5,22 @@ PODS:
     - BSImageView (= 1.0.3)
   - BSImageView (1.0.3)
   - Flutter (1.0.0)
+  - flutter_local_notifications (0.0.1):
+    - Flutter
   - multi_image_picker (4.7.14):
     - BSImagePicker (~> 2.10.3)
     - Flutter
   - shared_preferences (0.0.1):
     - Flutter
+  - uni_links (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - multi_image_picker (from `.symlinks/plugins/multi_image_picker/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
+  - uni_links (from `.symlinks/plugins/uni_links/ios`)
 
 SPEC REPOS:
   trunk:
@@ -25,19 +31,25 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_local_notifications:
+    :path: ".symlinks/plugins/flutter_local_notifications/ios"
   multi_image_picker:
     :path: ".symlinks/plugins/multi_image_picker/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
+  uni_links:
+    :path: ".symlinks/plugins/uni_links/ios"
 
 SPEC CHECKSUMS:
   BSGridCollectionViewLayout: 333dcb457a5a3bdd9212607ab5756553dcfe06cb
   BSImagePicker: 07404254f2fcdaf5a2eb403c0f8c337267ce8738
   BSImageView: a149459433a2687157d034c78e059d30ac7f2544
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   multi_image_picker: c068931d08240565e0615fb01437d16984909183
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
 
-PODFILE CHECKSUM: b1f7a399522c118a74b177b13c01eca692aa7e6d
+PODFILE CHECKSUM: 2da7f81cff80d7a00610dc7681497186c8b16ae9
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1

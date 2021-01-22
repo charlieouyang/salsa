@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:helistrong/models/listing.dart';
@@ -212,7 +210,7 @@ class _ListingDetailState extends State<ListingDetail> {
                                         ],
                                         begin: Alignment.bottomCenter,
                                         end: Alignment.topCenter,
-                                      ),
+                                      )
                                     ),
                                     padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
                                   ),

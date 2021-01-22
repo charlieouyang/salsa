@@ -24,11 +24,16 @@ class _RecentActivityPageState extends State<RecentActivityPage> {
     FontWeight.normal,
   ];
 
-  final List<Widget> _tabs = [
-    BuyerPurchases(),
-    SellerPurchases(),
-  ];
+  final Widget buyer = BuyerPurchases();
+  final Widget seller = SellerPurchases();
+
+  final List<Widget> _tabs = [];
   @override
+  void initState() {
+    super.initState();
+    _tabs.add(buyer);
+    _tabs.add(seller);
+  }
   Widget build(BuildContext context) {
     return Column(
       children: [

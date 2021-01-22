@@ -9,11 +9,18 @@ import 'package:helistrong/seller/view_products.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
+  HomePage({this.index});
+  final int index;
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState(
+    selectedIndex: index,
+  );
 }
 
 class _HomePageState extends State<HomePage> {
+  _HomePageState({this.selectedIndex});
+  final int selectedIndex;
+
   int _currentIndex = 0;
   final List<Widget>_children = [
     HomeScaffold(),
@@ -91,6 +98,7 @@ class _HomePageState extends State<HomePage> {
       _currentIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

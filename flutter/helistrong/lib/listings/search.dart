@@ -97,7 +97,6 @@ class _MainListingsPageState extends State<MainListingsPage> {
             if (listing.product.imageUrls.length > 0) {
               imageUrl = listing.product.imageUrls[0];
             }
-
             return GestureDetector(
               child: Container(
                 child: ListingItem(
