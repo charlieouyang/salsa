@@ -10,6 +10,8 @@ print("hello world")
 
 computer = Test("Hello World")
 
+computer.name = "Macbook Pro"
+
 print(computer.message)
 
 computer.set_message("Leaving World")
