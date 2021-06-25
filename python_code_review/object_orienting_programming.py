@@ -4,8 +4,9 @@ import pytz
 
 class Account:
 
-	@staticmethod
+
 	#creates a static method, meaning u don't need the self parameter anymore and this static method can be called using Account._current_time
+	@staticmethod
 	def _current_time():
 		utc_time = datetime.datetime.utcnow()
 		return pytz.utc.localize(utc_time)
@@ -14,8 +15,8 @@ class Account:
 		self.name = name
 		self.transaction_list = []
 		self.balance = balance
-		print("Account created for {} with balance of {}".format(self.name, self.balance))
-		self.transaction_list.append((pytz.utc.localize(datetime.datetime.utcnow()), amount))
+		print(f'Account created for {self.name} with balance of {self.balance}')
+		self.transaction_list.append((pytz.utc.localize(datetime.datetime.utcnow()), balance))
 
 	def deposit(self, amount):
 		if amount > 0:
@@ -28,11 +29,12 @@ class Account:
 			self.balance -= amount
 			self.show_balance()
 			self.transaction_list.append((pytz.utc.localize(datetime.datetime.utcnow()), -amount))
+
 		else :
-			print("cant do that my friend")
+			print('cant do that my friend')
 
 	def show_balance(self):
-		print("Balance of: {}".format(self.balance))
+		print(f'Balance of: {self.balance}')
 
 	def show_transactions(self):
 		for date, amount in self.transaction_list:
@@ -41,11 +43,11 @@ class Account:
 			else :
 				transaction_type = 'withdrawn'
 				amount = amount * (-1)
-			print("{:6} {} on {} (local time was {})".format(amount, transaction_type, date, date.astimezone()))
+			print(f'{amount} {transaction_type} on {date} local time was {date.astimezone()}')
 
 
 if __name__ == '__main__':
-	kevin = Account("kevin", 0)
+	kevin = Account('kevin', 0)
 	kevin.show_balance()
 
 	kevin.deposit(100)
@@ -54,7 +56,7 @@ if __name__ == '__main__':
 
 	kevin.show_transactions()
 
-	arya = Account("Arya", 5000)
+	arya = Account('Arya', 5000)
 
 	arya.deposit(500)
 	arya.withdraw(4000)
